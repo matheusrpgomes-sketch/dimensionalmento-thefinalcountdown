@@ -17,11 +17,13 @@ Guia de eventos, gastronomia e hospedagem de uma região, centrado num mapa. Web
 
 ## Resultado da régua
 
+_Recalculado em 22/10/2026 com a régua atual; conferido por `scripts/testar_exemplos.py`._
+
 | Fase | Mín | Central | Máx |
 |---|---|---|---|
 | F1 Imersão e setup | 1,5 | 2 | 2,5 |
 | F2 Acesso e login | 0,5 | 1 | 1,5 |
-| F3 Desenvolvimento (x1,1) | 5,4 | 6,5 | 8,6 |
+| F3 Desenvolvimento — pwa x1,1 (4 fluxos) | 5,4 | 6,5 | 8,6 |
 | F4 Testes com cliente | 1 | 1,5 | 2 |
 | F5 Deploy | 0,5 | 0,5 | 1 |
 | **Faixa** | **9** | **12** | **16** |

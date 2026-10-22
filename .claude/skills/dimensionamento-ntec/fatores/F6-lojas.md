@@ -30,6 +30,8 @@ Fazer na ordem. A primeira resposta que decide encerra o teste.
 
 **Sem resposta na pergunta 3:** app comum + pergunta em `a_confirmar`: "O app coleta dado de saúde, recebe pagamento ou é usado por crianças?", com `"troca": {"lojas": "sensivel"}`.
 
+**Categoria pela natureza do produto** (✅ decisão de 22/10/2026): calculadora clínica, de dose ou de prescrição, e app feito para profissional de saúde usar no atendimento, são categoria **Medical** mesmo que ninguém cite a categoria → **app sensível**, sem pergunta em `a_confirmar`. Citar a fala que descreve o produto.
+
 **Exemplo:** app de academia que só agenda aulas → comum. App de academia que registra peso, medidas e restrições médicas → sensível (dado de saúde).
 
 ---

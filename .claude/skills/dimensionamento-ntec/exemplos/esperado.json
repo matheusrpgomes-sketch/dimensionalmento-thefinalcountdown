@@ -1,0 +1,51 @@
+{
+  "ficticio-petagenda-prd.json": {
+    "otimista": 14,
+    "provavel": 19,
+    "conservador": 26,
+    "venda": 20,
+    "venda_com_todas": null
+  },
+  "ficticio-petagenda-proposta.json": {
+    "otimista": 14,
+    "provavel": 19,
+    "conservador": 26,
+    "venda": 20,
+    "venda_com_todas": null
+  },
+  "ficticio-petagenda.json": {
+    "otimista": 14,
+    "provavel": 18,
+    "conservador": 24,
+    "venda": 18,
+    "venda_com_todas": null
+  },
+  "projeto-a.json": {
+    "otimista": 9,
+    "provavel": 12,
+    "conservador": 16,
+    "venda": 12,
+    "venda_com_todas": null
+  },
+  "projeto-b.json": {
+    "otimista": 9,
+    "provavel": 12,
+    "conservador": 18,
+    "venda": 12,
+    "venda_com_todas": null
+  },
+  "projeto-c.json": {
+    "otimista": 13,
+    "provavel": 18,
+    "conservador": 24,
+    "venda": 18,
+    "venda_com_todas": null
+  },
+  "projeto-d.json": {
+    "otimista": 13,
+    "provavel": 18,
+    "conservador": 23,
+    "venda": 18,
+    "venda_com_todas": null
+  }
+}

@@ -70,6 +70,8 @@ Monte o **inventário de telas**, que vai para o anexo da proposta em `dimension
 
 A coluna **Citada em** liga a tela à fala: `T2 · 00:18:10` ou `não citada`. "Citada" quer dizer que alguém **falou da tela ou do que ela faz** na gravação, não só que ela passou na tela durante a demo.
 
+**Qual versão do protótipo vale** (✅ decisão de 22/10/2026): a que foi **mostrada ao cliente** na reunião gravada. Sem essa informação, o **link publicado** que o CN mandou. Se o código exportado, um print ou outra versão tiver telas ou campos que a versão válida não tem, eles **não** entram na conta e viram pergunta em `a_confirmar` ("o cliente viu e pediu X?"). Registrar no inventário qual versão foi usada.
+
 **Protótipo é desenho, não especificação.** Ele diz *quais* telas o cliente viu e *quem* as usa. Não diz formato (todo protótipo do Lovable é web, mesmo que o produto seja app), offline, volume, nem se o botão "Enviar no WhatsApp" é um link ou uma integração. Essas respostas vêm da transcrição.
 
 ---
@@ -106,7 +108,7 @@ A unidade de contagem é a **jornada** (glossário, *Jornada*): **perfil + objet
 | `offline_sync_com_mongodb_exigido` | Transcrição | Grava sem internet para subir depois **e** o cliente exige MongoDB → `true`. 🚫 rejeita | `false` |
 | `sla_ou_sustentacao` | Transcrição | Suporte 24/7, SLA ou sustentação além da garantia → `true`. 📝 contrato de manutenção à parte | `false` |
 | `infra_cliente_sem_acesso` | Transcrição ("fica no nosso servidor", "nossa TI publica") | Infra do cliente sem acesso do NTec → `true`. 📝 sem garantia | `false` |
-| `sem_validador_nomeado` | Transcrição | Ninguém nomeado para testar e aprovar → `true`. 🚩 | **`true`** (🚩, não soma semanas) |
+| `sem_validador_nomeado` | Transcrição | Ninguém nomeado para testar e aprovar → `true`. 🚩. Cliente pessoa física que revisa o protótipo → `false` (F0, 0.3) | **`true`** (🚩, não soma semanas) |
 | `feature_sem_referencia_nem_doc` | Transcrição **e** confirmação do CN | Só `true` com fala ("ninguém faz isso") **e** o CN confirmando. 🚩 | `false` |
 | `hardware` | Transcrição + protótipo | Bluetooth com dispositivo próprio, IoT, leitor, impressora fiscal → `true`. 🚩 | `false` |
 | `prazo_exigido_semanas` | Transcrição ("precisa estar pronto até…") | Semanas entre a data de início prevista e a data limite (sem início citado: a partir de hoje, em *Suposições*) | `null` |
@@ -126,14 +128,14 @@ Multa por atraso **saiu** do F0 em 22/10/2026 (não existe nos contratos do NTec
 | `multitenancy` | Transcrição ("cada unidade", "várias empresas") | Teste de `fatores/F2-acesso-multitenancy.md`. Regra própria por tenant → `"instancias"` (🚩) | Ninguém falou: `"nao"`. Citado sem detalhe: `"separado"` | `"troca": {"multitenancy": "isolado"}` e `{"multitenancy": "instancias"}` |
 | `integracoes` | Transcrição (o cliente nomeia o sistema) | Peso fixo de `fatores/F3-integracoes.md`. Sentido não dito → bidirecional (classificação) | Não conta. Botão do protótipo sem fala também não | Citada de forma vaga: `"integracao": "<linha>"` |
 | `dependencia_dados` | Transcrição ("a gente tem uma planilha com…", "o sistema antigo") | Migrar, limpar ou cruzar dado que já existe fora → `true` + núcleo de Dados | `false` | Citada sem dizer se migra: `"troca": {"dependencia_dados": true}` |
-| `offline` | Transcrição | Só consulta → `"local"`; grava e sincroniza → `"sync"` | `"nao"` | Sinal ruim citado sem detalhe: `"troca": {"offline": "sync"}` |
+| `offline` | Transcrição | Só consulta → `"local"`; grava e sincroniza → `"sync"`; "sem internet" + nada salvo → `"local"` (F3, Offline) | `"nao"` | Sinal ruim citado sem detalhe: `"troca": {"offline": "sync"}` |
 | `volume_alto` | Transcrição | 1.000+ simultâneos ou pico com data → `true` | `false` | "Muita gente" sem número: `"troca": {"volume_alto": true}` |
 | `rn_critica` | Transcrição | O código do NTec calcula dinheiro, dose, dado clínico, prazo legal ou fiscal → `true` | `false` | Cálculo citado sem dizer quem calcula: `"troca": {"rn_critica": true}` |
 | `demanda_pouco_detalhada` | Tudo | `fatores/F1-imersao-setup.md`, 1.2 | Pelas perguntas do 1.2 | — |
 | `stack_fora_template` | Transcrição | Exige tecnologia da lista aceita que não é a do template | `false` (template como premissa) | `"troca": {"stack_fora_template": true}` |
 | `deploy_infra_cliente` | Transcrição ("nossos servidores", "a TI aprova") | Infra do cliente | `false` (infra do NTec) | `"troca": {"deploy_infra_cliente": true}` |
 | `atipico` | Transcrição | `true` só se disseram que **não existe** nada parecido com o produto | `false` | "Existe app parecido?": `"troca": {"atipico": true}` |
-| `lojas` | Transcrição | Loja aberta → `"normal"`, ou `"sensivel"` (`fatores/F6-lojas.md`). Uso interno → `"nao"` | `"nao"` | `"troca": {"lojas": "normal"}` (ou `"sensivel"`) |
+| `lojas` | Transcrição | Loja aberta → `"normal"`, ou `"sensivel"` (`fatores/F6-lojas.md`; app clínico ou de dose é sensível pela natureza). Uso interno → `"nao"` | `"nao"` | `"troca": {"lojas": "normal"}` (ou `"sensivel"`) |
 
 ---
 

@@ -102,7 +102,7 @@ Uma tela solta não é jornada. A jornada só **entra na conta** se passar no Pa
 
 **Infra do cliente** — A conta de nuvem ou o servidor é do cliente, **ou** a TI do cliente aprova cada publicação.
 
-**App sensível** — Categoria Medical, Finance ou Kids na loja, **ou** coleta de dado sensível (LGPD, art. 5º, II: saúde, biometria, origem racial, religião etc.), **ou** pagamento dentro do app, **ou** público com menos de 13 anos.
+**App sensível** — Categoria Medical (inclui calculadora clínica ou de dose e app para profissional de saúde, mesmo sem a categoria citada), Finance ou Kids na loja, **ou** coleta de dado sensível (LGPD, art. 5º, II: saúde, biometria, origem racial, religião etc.), **ou** pagamento dentro do app, **ou** público com menos de 13 anos.
 
 ## Conta
 

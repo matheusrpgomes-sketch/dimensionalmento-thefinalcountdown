@@ -37,8 +37,8 @@ Sempre nesta ordem. Só passa ao passo seguinte se o anterior não resolver.
 | 4 | Serviço de mercado ou sistema do cliente? | "Tem API, o TI de lá passa" | Produto vendido para qualquer empresa, com API pública = mercado. Sistema que só o cliente usa, ou dúvida = sistema do cliente (peso fixo, sem pedir link) |
 | 5 | Atípico ou só setor incomum? | App de agenda para criadores de abelhas | Setor incomum com produto comum = **não** atípico. Atípico é o *produto* sem benchmark |
 | 6 | Mesmo formato ou formato extra? | Painel admin | Mesmo código web = mesmo formato. Código separado (ex.: app nativo + painel web) = extra, mas o extra só pesa nos fluxos com tela nos dois códigos (`compartilhado`). Na dúvida sobre onde o fluxo vive → `compartilhado` |
-| 8 | RN específica ou fluxo comum? | Relatório em PDF e Word num template fixo | Comum. Não usar a fronteira: template fixo e exportação estão decididos em `fatores/F3-desenvolvimento.md` (Passo 2). A fronteira só vale quando as perguntas do fator não decidem |
 | 7 | Dependência de dados ou integração? | "Importar a tabela nutricional pública" | Dado estático importado uma vez ou atualizado à mão = dependência de dados. Consulta automática a um serviço = integração |
+| 8 | RN específica ou fluxo comum? | Relatório em PDF e Word num template fixo | Comum. Não usar a fronteira: template fixo e exportação estão decididos em `fatores/F3-desenvolvimento.md` (Passo 2). A fronteira só vale quando as perguntas do fator não decidem |
 
 ## 4. Comentário obrigatório
 
@@ -52,7 +52,7 @@ Motivo: [qual fronteira e por que a regra decidiu assim]
 Exemplos:
 
 ```
-F2 níveis de acesso: 2-6 poucas diferenças → 2-6 grandes diferenças (+1)
+F2 níveis de acesso: 2-5 poucas diferenças → 2-5 grandes diferenças (+1)
 Motivo: são 3 perfis, mas o profissional tem cadastro com aprovação que bloqueia rotas; precedente Projeto C.
 
 F3 formato: PWA → app nativo (+x0,1 no núcleo, +2,5 de lojas)
@@ -79,9 +79,9 @@ Ordem de impacto típica:
 | Corte | Economia típica (central) |
 |---|---|
 | Publicar como PWA em vez de app nas lojas | F6 inteira (2,5 a 3) + fator de formato |
-| Tirar o segundo formato (só app ou só web no MVP) | ~10% do desenvolvimento + parte do deploy |
+| Tirar o segundo formato (só app ou só web no MVP) | Os fluxos daquele código + 0,2 do fator em cada fluxo `compartilhado` (D1) + parte do deploy |
 | Juntar perfis de usuário (ex.: um "profissional" no lugar de "nutricionista" e "psicólogo") | 0,5 a 1 em F2 |
 | Mover fluxos não essenciais para uma fase 2 | 1,25 por fluxo comum, 3 por fluxo com RN específica |
-| Trocar integração automática por importação manual (planilha) no MVP — é o plano B obrigatório de toda integração com sistema do cliente | 0,5 a 2,5 |
+| Trocar integração automática por importação manual (planilha) no MVP — é o plano B obrigatório de toda integração com sistema do cliente | 0,5 a 4 (`bi_sem_doc` custa 4 no central) |
 
 Sempre recalcular com o script depois do corte. Não subtrair de cabeça.

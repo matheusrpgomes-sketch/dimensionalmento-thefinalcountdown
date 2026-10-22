@@ -13,15 +13,15 @@ Este caso **não é um projeto real**. Serve para mostrar ao CN como a resposta 
 
 ⚠️ **Estimativa preliminar, sem PRD.** Rodar a skill da PRD antes de fechar a proposta.
 
-**1. Prazo em uma frase.** Recomendado vender **20 semanas (10 sprints)** + semanas off. Não vender abaixo de 14.
+**1. Prazo em uma frase.** Recomendado vender **18 semanas (9 sprints)** + semanas off. Não vender abaixo de 14.
 
 **2. Faixa de semanas**
 
 | Cenário | Semanas | Sprints | Quando acontece |
 |---|---|---|---|
 | Otimista (piso) | 14 | 7 | Escopo congelado, clínica responde rápido |
-| **Provável (recomendado)** | **19 → vender 20** | **10** | O que costuma acontecer no NTec |
-| Conservador (teto de risco) | 25 | 13 | Se pagamento e lojas derem problema |
+| **Provável (recomendado)** | **18** | **9** | O que costuma acontecer no NTec |
+| Conservador (teto de risco) | 24 | 12 | Se pagamento e lojas derem problema |
 
 **3. Resumo.** App nativo para tutores (lojas) + painel web para as clínicas. 4 perfis (tutor, recepção, veterinário, admin da rede). 4 fluxos críticos: agendar consulta, carteirinha de vacina com lembretes, registro de atendimento, gestão da agenda. Pagamento online e notificações. 3 clínicas com dados separados.
 
@@ -41,12 +41,12 @@ Este caso **não é um projeto real**. Serve para mostrar ao CN como a resposta 
 | Fase | Critério | Mín | Central | Máx |
 |---|---|---|---|---|
 | F1 Imersão e setup | base + demanda sem documento | 2 | 3 | 3,5 |
-| F2 Acesso e login | 4 perfis com telas próprias → 2 a 6 com grandes diferenças; dados separados por clínica | 2 | 2,5 | 3,5 |
-| F3 Desenvolvimento | 4 fluxos comuns × 1,3 (app + web); Mercado Pago (bi, doc); push (uni, doc) | 6,2 | 8 | 10,3 |
+| F2 Acesso e login | 4 perfis com telas próprias → 2 a 5 com grandes diferenças; dados separados por clínica | 2 | 2,5 | 3,5 |
+| F3 Desenvolvimento | 4 fluxos comuns: 1 no app (x1,2), 2 no painel (x1,0), 1 nos dois (x1,4); Mercado Pago (bi, doc); push (uni, doc) | 5,6 | 7,25 | 9,4 |
 | F4 Testes com cliente | base | 1 | 1,5 | 2 |
 | F5 Deploy | web + app | 0,5 | 1 | 1,5 |
 | F6 Lojas | app comum | 2 | 2,5 | 4 |
-| **Total** | | **14** | **19** | **25** |
+| **Total** | | **14** | **18** | **24** |
 
 **7. Precedente.** **Projeto D** (app nas lojas + painel web, 5 fluxos comuns): vendido 18, sem atraso até agora. O PetAgenda fica acima por causa do pagamento, dos perfis com mais diferenças e da demanda sem documento.
 
@@ -54,21 +54,21 @@ Este caso **não é um projeto real**. Serve para mostrar ao CN como a resposta 
 
 | Corte | Provável | Venda |
 |---|---|---|
-| Escopo completo | 19 | 20 |
+| Escopo completo | 18 | 18 |
 | PWA (app instalado pelo navegador) em vez de app nas lojas | 15 | 16 |
 | + pagamento na clínica no MVP (sem Mercado Pago) | 14 | 14 |
 | + carteirinha de vacina na fase 2 | 13 | **14** |
 
 **9. Bloco para colar no Dimensionamento Tec**
 ```
-7. Baseline: Imersão/setup 3 sem · Acesso/login 2,5 sem · Desenvolvimento 8 sem · Testes com cliente 1,5 sem · Deploy 1 sem · Lojas 2,5 sem
-Faixa: otimista 14 · provável 19 (vender 20) · conservador 25 semanas (+ semanas off)
+7. Baseline: Imersão/setup 3 sem · Acesso/login 2,5 sem · Desenvolvimento 7,25 sem · Testes com cliente 1,5 sem · Deploy 1 sem · Lojas 2,5 sem
+Faixa: otimista 14 · provável 18 (vender 18) · conservador 24 semanas (+ semanas off)
 ```
 
 **10. Observações**
 - *Suposições:* lembretes de vacina são notificações push simples (sem SMS ou WhatsApp); o painel da recepção e o do veterinário estão no mesmo código web; o login por e-mail e o upload de foto do pet usam o template.
 - *Ajustes de fronteira:*
   ```
-  F2 níveis de acesso: 2-6 poucas diferenças → 2-6 grandes diferenças (+1)
+  F2 níveis de acesso: 2-5 poucas diferenças → 2-5 grandes diferenças (+1)
   Motivo: veterinário e recepção têm telas e permissões próprias (registro de atendimento × agenda); na dúvida, a régua vai para o mais pesado.
   ```

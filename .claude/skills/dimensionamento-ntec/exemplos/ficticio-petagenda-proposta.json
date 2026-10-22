@@ -276,7 +276,12 @@
       ],
       [
         "Sprint 9",
-        "Aprovação nas lojas e entrega.",
+        "Aprovação nas lojas.",
+        "ponto 2"
+      ],
+      [
+        "Sprint 10",
+        "Correções finais e entrega.",
         "ponto 2"
       ]
     ],
@@ -345,7 +350,7 @@
     "criterios": {
       "F1": "Base. Duas transcrições + protótipo; referência citada na T1 (não atípico).",
       "F2": "Protótipo (menu por perfil) + T1: 4 perfis, Recepção e Veterinário com módulos próprios = grandes diferenças; dados separados por clínica.",
-      "F3": "3 fluxos comuns (2.2, 2.4, 2.5) + 1 com RN específica (2.3, rotina agendada) × 1,3; Mercado Pago bi_doc; push uni_doc. Núcleo com fator Claude Code (x0,75 no central).",
+      "F3": "3 fluxos comuns (2.2, 2.4, 2.5) + 1 com RN específica (2.3, rotina agendada), com fator por código: RN no app (x1,2), 2 comuns no painel (x1,0) e 1 comum compartilhado (x1,4); Mercado Pago bi_doc; push uni_doc.",
       "F4": "Base; cliente com validação semanal (Fathom · 12/03).",
       "F5": "Painel web + app.",
       "F6": "App comum nas lojas (T2 — \"tem que estar na App Store\")."

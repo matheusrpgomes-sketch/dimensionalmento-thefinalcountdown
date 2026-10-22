@@ -15,7 +15,7 @@
   "stack_fora_template": false,
   "niveis_acesso": "nenhum",
   "multitenancy": "nao",
-  "fluxos_comuns": 1,
+  "fluxos_comuns": 0,
   "fluxos_rn_especifica": 1,
   "features_atipicas": 0,
   "formatos": [
