@@ -19,7 +19,7 @@ O caminho completo deste arquivo vale quando **não há transcrição**: o formu
 
 ## Passo 2 — Preencher os fatores, perguntando o que faltar
 
-**Se veio transcrição do Fathom (ou de outra ferramenta):** procurar a resposta de cada pergunta nela antes de perguntar, com as mesmas regras do Passo 4 de `leitura-prd.md` (só vale o que foi dito explicitamente, citar a reunião e o trecho). O que não estiver lá vira **lacuna** em *Lacunas para o CN*. Stack, infra e referência de produto que ficarem como lacuna seguem o Passo 4 de `leitura-prd.md`: valor mais pesado na conta, o fator em `lacunas_fathom` no JSON e o "+" na venda. Quem valida sem resposta vira `f0.sem_validador_nomeado: true` (🚩).
+**Se veio transcrição do Fathom (ou de outra ferramenta):** procurar a resposta de cada pergunta nela antes de perguntar, com a regra zero de `leitura-transcricoes-prototipo.md` (só vale o que foi dito explicitamente, citar a reunião e o trecho). O que não estiver lá vira **lacuna** em *Lacunas para o CN*. Stack, infra e referência de produto que ficarem como lacuna seguem o Passo 3 de `leitura-transcricoes-prototipo.md` (fator de projeto sem resposta): valor mais pesado na conta, o fator em `lacunas_fathom` no JSON e o "+" na venda. Quem valida sem resposta vira `f0.sem_validador_nomeado: true` (🚩).
 
 **Critérios completos e pesos:** no arquivo de cada fase em `fatores/`. A tabela abaixo é o atalho das perguntas para o CN. **O JSON exige todos os campos**, inclusive o bloco `"f0"` (formato em `exemplos/*.json`): o que ninguém respondeu entra com o valor mais pesado e vai para *Suposições*.
 

@@ -28,7 +28,7 @@ Se nenhum critério bater, segue para o F1.
 
 | Pergunta | Onde ler | Sem resposta |
 |---|---|---|
-| O cliente **exige** alguma tecnologia fora da tabela acima? | PRD 3.1; Fathom ("tem que ser em…", "nossa TI só aceita…") | Segue para o F1. Registrar em *Suposições* que a stack será a do template, como premissa a validar na Sprint de Refino |
+| O cliente **exige** alguma tecnologia fora da tabela acima? | Transcrições ("tem que ser em…", "nossa TI só aceita…") | Segue para o F1. Registrar em *Suposições* que a stack será a do template, como premissa a validar na Sprint de Refino |
 
 Exemplos de **rejeição** (✅ Reunião 20/10): .NET, Angular, COBOL, Delphi. Também: Java/Spring, PHP/Laravel, Vue, Flutter, Django, Ruby on Rails (🔎 Proposta: estão fora da lista, confirmar).
 
@@ -42,7 +42,7 @@ Exemplos de **rejeição** (✅ Reunião 20/10): .NET, Angular, COBOL, Delphi. T
 
 | Pergunta | Onde ler | Resultado |
 |---|---|---|
-| O app **grava** dados sem internet para subir depois **e** o cliente exige MongoDB? | PRD (termo "offline"); 3.1; Fathom | 🚫 Rejeitado, até o cliente aceitar Postgres |
+| O app **grava** dados sem internet para subir depois **e** o cliente exige MongoDB? | Transcrições ("sem internet", "offline", "sincronizar depois") | 🚫 Rejeitado, até o cliente aceitar Postgres |
 | O app grava sem internet e o cliente **não** exige banco | — | Segue. A proposta registra "Postgres" como premissa (ver ⏳ **D5**) |
 
 > ⏳ **D5 — em aberto:** quando a troca para Postgres é obrigatória por causa do offline, isso soma como "stack fora do template" no F1? **Provisório:** não soma, vira só premissa da Sprint de Refino.
@@ -67,9 +67,9 @@ Estes casos estavam espalhados em F2 e F3. Agora são conferidos aqui, antes de 
 | Pergunta | Onde ler | Resultado |
 |---|---|---|
 | Algum tenant tem **código ou regra de negócio diferente** dos outros? (ver *Instâncias* no glossário) | Transcrições ("cada unidade tem a sua regra…") | 🚩 **Parada obrigatória** (✅ Reunião 22/10): o NTec não suporta essa arquitetura. A skill dimensiona, mas não se vende sem a área de projetos |
-| Alguma integração é com sistema que, segundo a PRD ou o Fathom, **não tem API**? (unidirecional **ou** bidirecional) | Itens SID "integrar com…"; Fathom | 🚩 Parar e consultar. Alternativa a sugerir: importação/exportação de planilha |
-| Alguma feature não tem **nenhuma** referência citada **e** não tem documentação técnica pública? | PRD fatores de complexidade; Fathom | 🚩 Parar e consultar. Pode exigir prova de conceito paga antes da proposta |
-| O produto depende de **hardware** (Bluetooth com dispositivo próprio, IoT, leitor, impressora fiscal)? | PRD; Fathom | 🚩 Parar e consultar (🔎 Proposta) |
+| Alguma integração é com sistema que, segundo as transcrições, **não tem API**? (unidirecional **ou** bidirecional) | Transcrições ("integrar com…", "puxar do sistema…"); botões do protótipo só com fala que os confirme | 🚩 Parar e consultar. Alternativa a sugerir: importação/exportação de planilha |
+| Alguma feature não tem **nenhuma** referência citada **e** não tem documentação técnica pública? | Transcrições ("tipo o…", "igual ao…"); protótipo | 🚩 Parar e consultar. Pode exigir prova de conceito paga antes da proposta |
+| O produto depende de **hardware** (Bluetooth com dispositivo próprio, IoT, leitor, impressora fiscal)? | Transcrições; protótipo | 🚩 Parar e consultar (🔎 Proposta) |
 
 ## 0.5 Demanda pouco detalhada
 
