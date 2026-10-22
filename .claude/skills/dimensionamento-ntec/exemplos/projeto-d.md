@@ -20,19 +20,21 @@ O cidadão registra avistagens de espécies com foto e geolocalização. App nat
 
 ## Resultado da régua
 
+_Recalculado em 22/10/2026 com a régua atual; conferido por `scripts/testar_exemplos.py`._
+
 | Fase | Mín | Central | Máx |
 |---|---|---|---|
 | F1 Imersão e setup | 1,5 | 2 | 2,5 |
 | F2 Acesso e login | 0,5 | 1 | 1,5 |
-| F3 Desenvolvimento (x1,3) | 7 | 8,6 | 10,8 |
+| F3 Desenvolvimento — compartilhado x1,4 (5 fluxos) | 7,5 | 9,25 | 11,5 |
 | F4 Testes com cliente | 1 | 1,5 | 2 |
 | F5 Deploy | 0,5 | 1 | 1,5 |
 | F6 Lojas | 2 | 2,5 | 4 |
-| **Faixa** | **13** | **17 → vender 18** | **23** |
+| **Faixa** | **13** | **18** | **23** |
 
 ## Vendido × realizado
 - **Recomendação de venda da régua = vendido (18).** Sem atraso até agora: 6 de 9 sprints abertas.
 - Resultado final: a confirmar.
 
 ## Lição para a régua
-Se o hand-off mostrar que o app precisa funcionar **offline com sincronização** (comum em uso de campo), a régua soma +2 no central (faixa 14 / 19 / 26, recomendação de venda 20). Vale como alerta para futuros apps de campo: perguntar sempre.
+Se o hand-off mostrar que o app precisa funcionar **offline com sincronização** (comum em uso de campo), a régua soma +2 no central (faixa 15 / 20 / 26, recomendação de venda 20). Vale como alerta para futuros apps de campo: perguntar sempre.

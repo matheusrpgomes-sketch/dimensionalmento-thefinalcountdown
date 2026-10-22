@@ -53,9 +53,12 @@ Exemplos de **rejeição** (✅ Reunião 20/10): .NET, Angular, COBOL, Delphi. T
 
 | Pergunta | Onde ler | Resultado |
 |---|---|---|
-| O cliente exige um prazo **menor que o cenário otimista** da skill? (`prazo_exigido_semanas`: semanas entre a **data de início prevista** citada na reunião e a data limite; sem data de início citada, contar a partir de hoje e dizer isso em *Suposições*) | Transcrições ("tem que estar pronto até…"); briefing do CN | 🚩 Parar e consultar (a skill dimensiona, mas o status fica 🚩) || O cliente exige **suporte 24/7, SLA ou sustentação** além da garantia de 30 dias? (`sla_ou_sustentacao`) | Transcrições | 📝 Não rejeita. Fica fora do prazo e vai para um **contrato de manutenção** à parte |
+| O cliente exige um prazo **menor que o cenário otimista** da skill? (`prazo_exigido_semanas`: semanas entre a **data de início prevista** citada na reunião e a data limite; sem data de início citada, contar a partir de hoje e dizer isso em *Suposições*) | Transcrições ("tem que estar pronto até…"); briefing do CN | 🚩 Parar e consultar (a skill dimensiona, mas o status fica 🚩) |
+| O cliente exige **suporte 24/7, SLA ou sustentação** além da garantia de 30 dias? (`sla_ou_sustentacao`) | Transcrições | 📝 Não rejeita. Fica fora do prazo e vai para um **contrato de manutenção** à parte |
 | O sistema vai rodar na infra do cliente **sem acesso do time do NTec** para publicar e corrigir? (`infra_cliente_sem_acesso`) | Transcrições | 📝 Não rejeita. O projeto **perde a garantia** de 30 dias e o contrato precisa dizer isso |
 | **Ninguém do cliente** foi nomeado para testar e aprovar as entregas? Ninguém falou disso nas reuniões conta como sim | Transcrições | 🚩 Parar e consultar. Não soma semanas: só segura a proposta até o CN trazer o nome |
+
+**Cliente pessoa física** (✅ decisão de 22/10/2026): quando o cliente é uma pessoa só, que participa das reuniões e revisa o protótipo (ex.: a médica dona da ideia), ela **é** a validadora nomeada (`sem_validador_nomeado: false`). Citar a fala em que ela aceita revisar ("vê se está de acordo… — Pode ser"). Vale só para pessoa física; em empresa, continua precisando de um nome.
 
 O campo `multa_por_atraso` não existe mais: se aparecer no JSON, o script pede para tirar.
 

@@ -164,6 +164,7 @@ Se a importação roda **sozinha**, sem ninguém disparar, é integração (`F3-
 | O app só **lê** sem internet o que já está no aparelho? | Transcrições | Offline local |
 | Ninguém falou de internet ou sinal | — | Nenhum (0) |
 | Falaram de sinal ruim sem dizer o que o app faz sem internet | Transcrições | Nenhum (0) + pergunta em `a_confirmar` com `"troca": {"offline": "sync"}` |
+| Falaram que precisa funcionar sem internet **e** as reuniões dizem que o app não salva nada (sem histórico, sem cadastro, cálculo na hora) | Transcrições | Offline local (0). Não vira pergunta: sem dado salvo, não há o que sincronizar (✅ decisão de 22/10/2026) |
 
 > 🔎 **Proposta:** baixar dados do servidor para consultar offline já é uma sincronização de mão única e tem custo. Sugestão: offline local com leitura de dados do servidor = +0,5 / +0,5 / +1. **Até validar:** 0.
 

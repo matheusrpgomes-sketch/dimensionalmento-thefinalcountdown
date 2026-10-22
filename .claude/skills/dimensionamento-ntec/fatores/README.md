@@ -61,6 +61,6 @@ Todo critério segue o mesmo formato, para que o Claude não precise interpretar
 ## O que ainda não foi feito
 
 - `calcular_faixa.py` já segue estes arquivos (21/10/2026). O F0 está no bloco `"f0"` do JSON. Nenhum campo tem padrão. As decisões D1–D5 estão nas constantes marcadas com `D1`…`D5`.
-- O texto de `exemplos/*.md` e o exemplo `ficticio-petagenda-proposta.json` (cronograma com 9 sprints, feito com o fator Claude Code) ainda mostram os números antigos.
-- `SKILL.md`, `regua-dimensionamento.md`, `leitura-prd.md` e `insumos-e-perguntas.md` já apontam para cá (21/10/2026). `regra-fronteira-e-faixa.md` ainda cita as regras antigas.
+- As fichas `exemplos/*.md` e a tabela de `exemplos/README.md` foram recalculadas em 22/10/2026 e são conferidas por `scripts/testar_exemplos.py`. Os Projetos A, C e D ainda estão com a **contagem antiga** (tasks do Notion): recontar por jornada quando houver as transcrições.
+- `SKILL.md`, `regua-dimensionamento.md`, `leitura-prd.md` e `insumos-e-perguntas.md` já apontam para cá (21/10/2026). `regra-fronteira-e-faixa.md` revisto em 22/10/2026 (nomes de linha e pesos atuais).
 - **Teste de concordância** (🔎 Proposta): antes de adotar, aplicar estes critérios aos Projetos A, B, C e D com 2 CNs e o Claude, sem um ver a classificação do outro, e conferir onde divergem.
