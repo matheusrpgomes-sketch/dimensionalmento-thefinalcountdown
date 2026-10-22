@@ -32,6 +32,9 @@ Sempre entra. Cobre imersão, Sprint de Refino, setup do monorepo e pedido de ac
 | Alguma integração citada não tem como saber o sentido (só puxa, só manda, ou os dois)? | Transcrições | Sim |
 | O cliente citou uma regra de cálculo, fórmula ou regra legal, mas ninguém disse como ela funciona nem onde está escrita? | Transcrições | Sim |
 | Mais de 3 jornadas do protótipo ficaram *A confirmar* (ninguém falou delas)? | Passo 3 de `leitura-transcricoes-prototipo.md` | Sim |
+| Mais de 5 itens no total ficaram em `a_confirmar`? | JSON da régua | Sim |
+
+As jornadas, integrações e regras que geraram o `true` **não** entram na conta por causa disso: elas continuam em `a_confirmar`. A linha 1.2 paga só o tempo extra de imersão para fechar o escopo.
 
 **Com PRD (revalidação depois do contrato):**
 
@@ -59,7 +62,7 @@ Stack que o cliente exige e está **fora** da lista do F0 já foi rejeitada. Aqu
 
 | Pergunta | Onde ler | Sem resposta |
 |---|---|---|
-| O cliente exige uma tecnologia da lista aceita do F0 que **não é a do template** (ex.: Supabase ou Postgres no lugar de MongoDB)? | PRD 3.1; Fathom | `false`. Registrar a stack do template como premissa a validar na Sprint de Refino |
+| O cliente exige uma tecnologia da lista aceita do F0 que **não é a do template** (ex.: Supabase ou Postgres no lugar de MongoDB)? | Transcrições ("a gente já usa Supabase", "tem que ser Postgres"). Na revalidação: PRD 3.1 | `false`. Registrar a stack do template como premissa a validar na Sprint de Refino + pergunta em `a_confirmar` com `"troca": {"stack_fora_template": true}` |
 
 > ⏳ **D5 — em aberto:** a troca para Postgres obrigatória por causa do offline com sincronização conta aqui? **Provisório:** não conta.
 
@@ -69,7 +72,7 @@ Stack que o cliente exige e está **fora** da lista do F0 já foi rejeitada. Aqu
 
 | Pergunta | Onde ler | Sem resposta |
 |---|---|---|
-| Nenhum app ou site foi citado como referência para o **produto inteiro**? | Fathom ("tipo o…", "igual ao…", "vi um que…") | `true` + lacuna: "Existe algum app ou site parecido que a gente possa usar de referência?" |
+| O cliente ou o CN disseram nas reuniões que **não existe** app ou site parecido com o **produto inteiro**? | Transcrições ("não tem nada parecido", "ninguém faz isso"). Referência citada ("tipo o…", "igual ao…", "vi um que…") → `false` | `false` + pergunta em `a_confirmar`: "Existe algum app ou site parecido que a gente possa usar de referência?", com `"troca": {"atipico": true}` |
 
 **Não confundir:**
 - Setor incomum com produto comum (agenda para criadores de abelhas) → `false`.

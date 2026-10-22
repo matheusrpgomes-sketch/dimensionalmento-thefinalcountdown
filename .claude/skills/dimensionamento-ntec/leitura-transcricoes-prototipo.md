@@ -2,9 +2,9 @@
 
 ✅ **Reunião "Validação Entregas Tec" (22/10/2026):** o dimensionamento sai direto das **transcrições das reuniões de diagnóstico** (normalmente duas) e do **protótipo navegável** (Lovable, Claude, v0, Figma…). A PRD **não** é pré-requisito: ela é gerada depois da assinatura, como anexo de contrato, e serve para revalidar o número (`leitura-prd.md`).
 
-Por que mudou: contar módulos da PRD media o estilo de quem escreveu o documento, não o trabalho. E ambiguidade na PRD virava gordura na conta (Projeto CTE: 17 sprints, com 13 a 14 esperadas). Agora a skill conta **jornadas** que o cliente pediu e que aparecem no protótipo, e **ambiguidade vira pergunta para o CN**, não semana a mais.
+Por que mudou: contar módulos da PRD media o estilo de quem escreveu o documento, não o trabalho. E ambiguidade na PRD virava gordura na conta (Projeto CTE: 17 sprints, com 13 a 14 esperadas). Agora a skill conta **jornadas** que o cliente pediu, e **toda dúvida vira pergunta para o CN, fora da venda**, nunca semana a mais escondida no número.
 
-Este arquivo diz onde, nas transcrições e no protótipo, está cada campo do JSON do `scripts/calcular_faixa.py`. O critério completo de cada fator está em `fatores/`; se divergirem, vale `fatores/`. **Todo campo é obrigatório:** o script não tem valor padrão.
+Este arquivo diz onde, nas transcrições e no protótipo, está cada campo do JSON do `scripts/calcular_faixa.py`, e **qual é o valor de cada campo quando ninguém falou dele** (Passo 4). Essa tabela do silêncio é a única: os arquivos de `fatores/` apontam para ela. **Todo campo é obrigatório:** o script não tem valor padrão.
 
 ---
 
@@ -17,13 +17,16 @@ Tudo que entra no JSON e na proposta precisa de **uma** destas origens, escrita 
 | Fala numa transcrição | `(T1 · 00:12:30 — "a Ana valida toda sexta")`. Sem marcação de tempo: `(T1 — "trecho")` |
 | Tela do protótipo | `(Protótipo · tela "Agenda da clínica")` ou `(Protótipo · rota /admin/agenda)` |
 | Resposta do CN no chat | `(CN, no chat)` |
-| Regra da skill | `(regra de peso fixo)`, `(suposição da skill — valor mais pesado)` |
+| Resumo de reunião, quando não há transcrição | `(resumo T1 — "trecho do resumo")`. Deixa o status ⚠️ preliminar (Passo 1) |
+| Silêncio | `(silêncio — valor do Passo 4)` + a pergunta em `a_confirmar` |
+| Regra da skill | `(regra de peso fixo)`, `(fronteira — linha mais pesada)` |
 
 Proibido:
 - **Completar o produto com o que "normalmente tem"** (tela de relatórios, painel admin, notificações, histórico). Se ninguém falou e o protótipo não mostra, não existe.
-- **Ler intenção no tom da conversa.** "Seria legal ter…", "quem sabe depois", "vamos ver" não é escopo.
-- **Tratar dado fictício do protótipo como integração real.** Um card "Pago via Pix" com dado inventado não prova que existe integração de pagamento: precisa de fala na transcrição ou de um fluxo completo de pagamento no protótipo.
+- **Ler intenção no tom da conversa.** "Seria legal ter…", "quem sabe depois", "vamos ver" não é escopo. **Silêncio também não é aceite:** o cliente não ter reclamado de uma tela não quer dizer que pediu.
+- **Tratar dado fictício do protótipo como integração real.** Um card "Pago via Pix" com dado inventado não prova que existe integração de pagamento: precisa de fala na transcrição.
 - **Misturar projetos.** Se a transcrição cita outro cliente ou outro projeto da Poli como exemplo, aquilo não entra no escopo.
+- **Pôr dúvida na venda.** O que não tem citação fica no valor do silêncio e vai para `a_confirmar` (Passo 5).
 
 Se uma citação não puder ser encontrada de novo no texto, ela não existe: tire o item.
 
@@ -34,8 +37,8 @@ Se uma citação não puder ser encontrada de novo no texto, ela não existe: ti
 | Peça | Como usar |
 |---|---|
 | **Transcrições das reuniões de diagnóstico** (Fathom, Granola, Meet, Teams; texto colado, `.txt`, `.md`, `.docx` ou PDF) | Fonte do **escopo pedido** e de tudo que é do **projeto** (quem valida, stack, infra, lojas, prazo, contrato, referências). Numerar na ordem das datas: T1, T2… |
-| **Protótipo navegável** (link, código exportado, prints ou vídeo) | Fonte das **jornadas, telas e perfis**: é o que o cliente viu. Ver o Passo 2 |
-| Resumo da reunião (anotações do Gemini, do Fathom) | Só para achar o trecho na transcrição. Não cita resumo: cita a transcrição |
+| **Protótipo navegável** (link, código exportado, prints ou vídeo) | Fonte das **telas e perfis** que o cliente viu. Ver o Passo 2. Sozinho, não põe nada na conta (Passo 3) |
+| Resumo da reunião (anotações do Gemini, do Fathom) | Com a transcrição junto: só para achar o trecho; cita-se a transcrição. **Sem a transcrição:** usar o resumo e marcar ⚠️ preliminar |
 | Formulário Dimensionamento Tec, ficha, briefing | Complemento. Vocabulário e perguntas em `insumos-e-perguntas.md` |
 | PRD (se já existir) | Conferência, nunca contagem de módulo. Divergência com transcrição/protótipo vai para *Pontos de atenção* |
 
@@ -43,9 +46,10 @@ Se uma citação não puder ser encontrada de novo no texto, ela não existe: ti
 
 | Chegou | O que a skill faz |
 |---|---|
-| Transcrições + protótipo | Caminho padrão. Status pode ser ✅ |
+| Transcrições + protótipo | Caminho padrão. Status pode ser ✅ (se não sobrar pergunta em aberto) |
 | Só transcrições | Dimensiona, status ⚠️ *Estimativa preliminar: falta o protótipo*. Pede o protótipo ao CN |
-| Só protótipo | **Não dimensiona.** O protótipo não diz nada do projeto (quem valida, lojas, infra, prazo). Pedir as transcrições |
+| Só o resumo das reuniões (sem transcrição), com ou sem protótipo | Dimensiona, status ⚠️ *Estimativa preliminar: só o resumo das reuniões*. Cita `(resumo T1)`. Pede a transcrição completa antes de fechar a proposta |
+| Só protótipo | **Não dimensiona.** O protótipo não diz nada do projeto (quem valida, lojas, infra, prazo) nem o que o cliente pediu. Pedir as transcrições |
 | Uma transcrição só (esperava duas) | Dimensiona normalmente, e pergunta ao CN se houve outra reunião |
 
 ---
@@ -64,81 +68,111 @@ Monte o **inventário de telas**, que vai para o anexo da proposta em `dimension
 | Tela / rota | Perfil que vê | O que a pessoa faz ali | Dados que aparecem | Ações (botões que gravam, enviam, cobram) | Citada em |
 |---|---|---|---|---|---|
 
-A coluna **Citada em** liga a tela à fala: `T2 · 00:18:10` ou `não citada`.
+A coluna **Citada em** liga a tela à fala: `T2 · 00:18:10` ou `não citada`. "Citada" quer dizer que alguém **falou da tela ou do que ela faz** na gravação, não só que ela passou na tela durante a demo.
 
-**Protótipo é desenho, não especificação.** Ele diz *quais* jornadas existem e *quem* as usa. Não diz formato (todo protótipo do Lovable é web, mesmo que o produto seja app), offline, volume, nem se o botão "Enviar no WhatsApp" é um link ou uma integração. Essas respostas vêm da transcrição.
+**Protótipo é desenho, não especificação.** Ele diz *quais* telas o cliente viu e *quem* as usa. Não diz formato (todo protótipo do Lovable é web, mesmo que o produto seja app), offline, volume, nem se o botão "Enviar no WhatsApp" é um link ou uma integração. Essas respostas vêm da transcrição.
 
 ---
 
 ## Passo 3 — Cruzar protótipo × transcrição: o que é escopo
 
-A unidade de contagem é a **jornada** (glossário, *Fluxo*): um objetivo completo de uma pessoa, do começo ao fim (ex.: "o tutor agenda e paga a consulta"). Várias telas da mesma jornada = 1 fluxo. Contar jornadas, nunca telas nem menus.
+A unidade de contagem é a **jornada** (glossário, *Jornada*): **perfil + objetivo + entidade principal**, com a regra de agrupamento do glossário (cadastro auxiliar não conta; 3+ entidades ou 6+ telas próprias contam 2). Contar jornadas, nunca telas nem menus.
 
 | Situação | Entra na conta? | O que fazer |
 |---|---|---|
 | Jornada no protótipo **e** pedida na transcrição | Sim | Citar as duas origens |
-| Jornada no protótipo, **não** citada nas transcrições, mas apresentada ao cliente numa reunião sem objeção (ex.: T2 é a apresentação do protótipo) | Sim | Citar a reunião em que o protótipo foi mostrado |
-| Jornada só no protótipo, **sem nenhuma** menção nas reuniões | **Não** | Vai para a seção 11 como *A confirmar*, com o custo dela ("se entrar: +1,25 semana no provável") e uma pergunta pronta para o CN. Prototipadores com IA criam telas que ninguém pediu: contar isso é a gordura que a reunião de 22/10 mandou tirar |
-| Jornada pedida explicitamente na transcrição, **sem tela** no protótipo | Sim | Ponto de atenção: "o protótipo não cobre X". Se a fala for vaga, é lacuna, não escopo |
+| Jornada no protótipo, mostrada numa reunião gravada **e comentada** pelo cliente (ele fala dela, pede ajuste, aprova em voz alta) | Sim | Citar o trecho com a marcação de tempo |
+| Jornada no protótipo que **só passou na tela** durante a demo, sem nenhuma fala sobre ela | **Não** | `a_confirmar`. O cliente não reclamar não é pedido |
+| Jornada só no protótipo, **sem nenhuma** menção nas reuniões | **Não** | `a_confirmar` com o efeito `jornada` e uma pergunta pronta. Prototipadores com IA criam telas que ninguém pediu: contar isso é a gordura que a reunião de 22/10 mandou tirar |
+| Perfil só no protótipo (seletor de perfil, usuário de demonstração), sem fala | **Não** | `a_confirmar` com `"troca": {"niveis_acesso": ...}` |
+| Jornada pedida na transcrição, **sem tela** no protótipo, com fala que diz quem faz e o que sai no fim | Sim | Ponto de atenção: "o protótipo não cobre X" |
+| Jornada pedida na transcrição, sem tela, com **fala vaga** | **Não** | `a_confirmar` |
 | Cliente disse que **não** quer, ou "fica para depois" | Não | Vai para *Futuro* no roadmap |
-| Duas reuniões discordam | Vale a **mais recente** | Divergência em *Pontos de atenção*. Se não der para saber qual vale, é lacuna |
+| Duas reuniões discordam | Vale a **mais recente** | Divergência em *Pontos de atenção*. Se não der para saber qual vale, a mais leve vai na conta e a outra vai para `a_confirmar` |
 
-**Duas regras diferentes para coisas diferentes:**
-- **Escopo ambíguo** (não se sabe *se* a jornada entra): não conta; vira pergunta com custo. O CN decide com o cliente.
-- **Fator de projeto sem resposta** (quem valida, stack, lojas, referência, infra): entra com o **valor mais pesado** + lacuna com "+" na venda, como sempre (`regua-dimensionamento.md`, *Faixa final*).
+**Uma regra só para toda dúvida:** o que as reuniões não decidem (escopo ambíguo **ou** fator de projeto sem resposta) **não entra na venda**. Vai na conta com o valor do silêncio (Passo 4) e para `a_confirmar` com o efeito se a resposta for sim. O script mostra a venda "+ até X" e cada pergunta com o custo. **Exceção:** quem valida as entregas (F0): o silêncio vira 🚩, que não soma semanas mas segura a proposta.
+
+**A linha mais pesada continua valendo só para classificar** um fator **citado** que encaixa em duas linhas (ex.: o cliente falou "no celular" sem dizer loja → app; falou do ERP sem dizer o sentido → bidirecional). Nunca para decidir **se** uma coisa entra.
 
 ---
 
-## Passo 4 — Onde está cada campo do JSON
+## Passo 4 — Onde está cada campo do JSON, e o valor no silêncio
 
 **Primeiro o F0** (`fatores/F0-viabilidade.md`):
 
-| Campo do bloco `"f0"` | Onde ler | Como traduzir |
-|---|---|---|
-| `stack_exigida_fora_da_lista` | Transcrição ("tem que ser em…", "nossa TI só aceita…") | `true` só se o cliente **exige**. "Vocês decidem" → `false`. 🚫 rejeita |
-| `offline_sync_com_mongodb_exigido` | Transcrição | Grava sem internet para subir depois **e** o cliente exige MongoDB → `true`. 🚫 rejeita |
-| `sla_ou_sustentacao` | Transcrição | Suporte 24/7, SLA ou sustentação além da garantia → `true`. **Não rejeita** (22/10): vira alerta de contrato de manutenção à parte |
-| `infra_cliente_sem_acesso` | Transcrição ("fica no nosso servidor", "nossa TI publica") | Infra do cliente sem acesso do NTec → `true`. **Não rejeita** (22/10): o projeto perde a garantia e o contrato diz isso |
-| `sem_validador_nomeado` | Transcrição | Ninguém nomeado para testar e aprovar → `true`. 🚩 |
-| `feature_sem_referencia_nem_doc` | Transcrição + protótipo | Feature sem referência citada **e** sem documentação pública → `true`. 🚩 |
-| `hardware` | Transcrição + protótipo | Bluetooth com dispositivo próprio, IoT, leitor, impressora fiscal → `true`. 🚩 |
-| `prazo_exigido_semanas` | Transcrição ("precisa estar pronto até…") | Semanas até a data, ou `null` |
+| Campo do bloco `"f0"` | Onde ler | Como traduzir | Silêncio |
+|---|---|---|---|
+| `stack_exigida_fora_da_lista` | Transcrição ("tem que ser em…", "nossa TI só aceita…") | `true` só se o cliente **exige**. "Vocês decidem" → `false`. 🚫 rejeita | `false` |
+| `offline_sync_com_mongodb_exigido` | Transcrição | Grava sem internet para subir depois **e** o cliente exige MongoDB → `true`. 🚫 rejeita | `false` |
+| `sla_ou_sustentacao` | Transcrição | Suporte 24/7, SLA ou sustentação além da garantia → `true`. 📝 contrato de manutenção à parte | `false` |
+| `infra_cliente_sem_acesso` | Transcrição ("fica no nosso servidor", "nossa TI publica") | Infra do cliente sem acesso do NTec → `true`. 📝 sem garantia | `false` |
+| `sem_validador_nomeado` | Transcrição | Ninguém nomeado para testar e aprovar → `true`. 🚩 | **`true`** (🚩, não soma semanas) |
+| `feature_sem_referencia_nem_doc` | Transcrição **e** confirmação do CN | Só `true` com fala ("ninguém faz isso") **e** o CN confirmando. 🚩 | `false` |
+| `hardware` | Transcrição + protótipo | Bluetooth com dispositivo próprio, IoT, leitor, impressora fiscal → `true`. 🚩 | `false` |
+| `prazo_exigido_semanas` | Transcrição ("precisa estar pronto até…") | Semanas entre a data de início prevista e a data limite (sem início citado: a partir de hoje, em *Suposições*) | `null` |
 
 Multa por atraso **saiu** do F0 em 22/10/2026 (não existe nos contratos do NTec): não pôr o campo no JSON.
 
-**Depois F1 a F6:**
+**Depois F1 a F6.** Coluna **Silêncio**: o valor que vai na venda quando ninguém falou; **Pergunta em `a_confirmar`**: o efeito se a resposta for sim.
 
-| Campo do JSON | Onde ler | Como traduzir |
-|---|---|---|
-| `formatos` | **Transcrição** ("baixar na loja", "pelo navegador", "no celular") | Ver `insumos-e-perguntas.md` (Formato). O protótipo não decide: Lovable é sempre web. Sem fala → lacuna; na dúvida entre PWA e app → app |
-| `fluxos_por_formato` | Perfil × formato | Só com mais de um formato. O fluxo que só um perfil usa vive no formato daquele perfil; dúvida → `"compartilhado"` |
-| `lojas` | Transcrição | App público na loja → `"normal"`, ou `"sensivel"` com dado de saúde, financeiro ou de menores. Uso interno → `"nao"`. Silêncio → `"normal"` + `"lojas"` em `lacunas_fathom` |
-| `niveis_acesso` | Protótipo (menus por perfil, troca de perfil, telas de aprovação) + transcrição | Contar os perfis (admin conta). Teste de `fatores/F2-acesso-multitenancy.md` |
-| `multitenancy` | Transcrição ("cada unidade", "várias empresas") | Teste de `fatores/F2-acesso-multitenancy.md`. Regra própria por tenant → `"instancias"`: **parada obrigatória** (🚩) |
-| `fluxos_comuns` | Inventário de telas, agrupado em jornadas (Passo 3) | Tirar login e cadastro de conta (F2) e publicação (F5/F6). Registrar o agrupamento em *Suposições*: "Jornada 'agendar consulta' = telas Agenda, Horários, Confirmação" |
-| `fluxos_rn_especifica` | Transcrição: cálculo, fórmula, regra clínica, legal ou de dinheiro **do cliente** | A jornada sai de `fluxos_comuns` e entra aqui. Uma vez por jornada. Concorrência, imutabilidade e rotina agendada também (tabela do Passo 3 de `leitura-prd.md`) |
-| `features_atipicas` | Transcrição + protótipo | Tempo real por push, construtor de relatório, feature sem benchmark (`leitura-prd.md`, Passo 3) |
-| `integracoes` | Transcrição (o cliente nomeia o sistema) + botões do protótipo | Peso fixo de `fatores/F3-integracoes.md`, sem perguntar sobre documentação. Botão no protótipo **sem** fala → lacuna de escopo (Passo 3), não integração |
-| `dependencia_dados` | Transcrição ("a gente tem uma planilha com…", "o sistema antigo") | Migrar, limpar ou cruzar dado que já existe fora → `true` + núcleo de Dados |
-| `offline` | Transcrição | Só consulta → `"local"`; grava e sincroniza → `"sync"`. Silêncio → `"nao"` |
-| `volume_alto` | Transcrição | Milhares simultâneos ou picos → `true` |
-| `rn_critica` | Transcrição | O código do NTec calcula dinheiro, dose, dado clínico, prazo legal ou fiscal → `true` |
-| `demanda_pouco_detalhada` | Tudo | Ver `fatores/F1-imersao-setup.md`, 1.2 (critérios para transcrição + protótipo) |
-| `stack_fora_template`, `deploy_infra_cliente` | Transcrição | Como no F0. Silêncio → `false` (stack do template como premissa) |
-| `atipico` | Transcrição ("tipo o…", "igual ao…") | Referência citada → `false`. Nenhuma → `true` + lacuna |
+| Campo do JSON | Onde ler | Como traduzir | Silêncio | Pergunta em `a_confirmar` |
+|---|---|---|---|---|
+| `formatos` | **Transcrição** ("baixar na loja", "pelo navegador", "no celular") | O protótipo não decide: Lovable é sempre web. Dúvida entre PWA e app → app (fronteira) | **Não dimensionar**: perguntar ao CN antes | — |
+| `fluxos_por_formato` | Perfil × formato, pela transcrição | Só com mais de um formato. A jornada de um perfil que só usa um código vive nele | Dúvida → `"compartilhado"` (classificação) | — |
+| `fluxos_comuns` | Inventário agrupado em jornadas (Passo 3 + glossário) | Só as jornadas que passaram no Passo 3. Agrupamento em *Suposições* | Não conta | `"jornada": {"tipo": "comuns", "formato": ..., "quantas": n}` |
+| `fluxos_rn_especifica` | Transcrição: fórmula, tabela, norma, protocolo **do cliente**; concorrência; imutabilidade; rotina agendada | A jornada sai de `fluxos_comuns` e entra aqui. Uma vez por jornada | Fluxo comum | Regra citada sem detalhe: `"vira_rn_especifica": {"formato": ..., "quantas": 1}` |
+| `features_atipicas` | Transcrição + protótipo | Pedidas nas reuniões e na lista do glossário (tempo real, construtor de relatório) | 0 | `"jornada": {"tipo": "atipicas", ...}` |
+| `niveis_acesso` | Transcrição (quem usa) + protótipo (telas de cada perfil) | Contar os perfis **citados** (admin conta). Teste de `fatores/F2-acesso-multitenancy.md` | Só os citados; testes a, b, c = não | Perfil ou diferença só no protótipo: `"troca": {"niveis_acesso": ...}` |
+| `multitenancy` | Transcrição ("cada unidade", "várias empresas") | Teste de `fatores/F2-acesso-multitenancy.md`. Regra própria por tenant → `"instancias"` (🚩) | Ninguém falou: `"nao"`. Citado sem detalhe: `"separado"` | `"troca": {"multitenancy": "isolado"}` e `{"multitenancy": "instancias"}` |
+| `integracoes` | Transcrição (o cliente nomeia o sistema) | Peso fixo de `fatores/F3-integracoes.md`. Sentido não dito → bidirecional (classificação) | Não conta. Botão do protótipo sem fala também não | Citada de forma vaga: `"integracao": "<linha>"` |
+| `dependencia_dados` | Transcrição ("a gente tem uma planilha com…", "o sistema antigo") | Migrar, limpar ou cruzar dado que já existe fora → `true` + núcleo de Dados | `false` | Citada sem dizer se migra: `"troca": {"dependencia_dados": true}` |
+| `offline` | Transcrição | Só consulta → `"local"`; grava e sincroniza → `"sync"` | `"nao"` | Sinal ruim citado sem detalhe: `"troca": {"offline": "sync"}` |
+| `volume_alto` | Transcrição | 1.000+ simultâneos ou pico com data → `true` | `false` | "Muita gente" sem número: `"troca": {"volume_alto": true}` |
+| `rn_critica` | Transcrição | O código do NTec calcula dinheiro, dose, dado clínico, prazo legal ou fiscal → `true` | `false` | Cálculo citado sem dizer quem calcula: `"troca": {"rn_critica": true}` |
+| `demanda_pouco_detalhada` | Tudo | `fatores/F1-imersao-setup.md`, 1.2 | Pelas perguntas do 1.2 | — |
+| `stack_fora_template` | Transcrição | Exige tecnologia da lista aceita que não é a do template | `false` (template como premissa) | `"troca": {"stack_fora_template": true}` |
+| `deploy_infra_cliente` | Transcrição ("nossos servidores", "a TI aprova") | Infra do cliente | `false` (infra do NTec) | `"troca": {"deploy_infra_cliente": true}` |
+| `atipico` | Transcrição | `true` só se disseram que **não existe** nada parecido com o produto | `false` | "Existe app parecido?": `"troca": {"atipico": true}` |
+| `lojas` | Transcrição | Loja aberta → `"normal"`, ou `"sensivel"` (`fatores/F6-lojas.md`). Uso interno → `"nao"` | `"nao"` | `"troca": {"lojas": "normal"}` (ou `"sensivel"`) |
 
 ---
 
-## Passo 5 — Perguntas ao CN em vez de gordura
+## Passo 5 — Perguntas ao CN em vez de gordura (`a_confirmar`)
 
-Ao fim da leitura, a skill **critica a clareza** antes de fechar o número. Para cada ambiguidade, uma pergunta pronta, a resposta que muda a conta e quanto muda:
+Ao fim da leitura, a skill **critica a clareza** antes de fechar o número. Cada dúvida vira um item de `a_confirmar` no JSON, com o efeito se a resposta for sim. **O custo é do script, nunca de cabeça:**
 
+```json
+"a_confirmar": [
+  {
+    "o_que": "Tela \"Relatórios\" está no protótipo, ninguém falou dela (Protótipo · tela \"Relatórios\")",
+    "pergunta": "O relatório de vendas entra no MVP?",
+    "efeito": {"jornada": {"tipo": "comuns", "formato": "web", "quantas": 1}}
+  },
+  {
+    "o_que": "ERP citado de passagem, sem dizer se troca dados (T1 · 00:40:12 — \"lá a gente usa o Bling\")",
+    "pergunta": "O sistema precisa mandar ou receber dados do Bling automaticamente?",
+    "efeito": {"integracao": "bi_sem_doc"}
+  },
+  {
+    "o_que": "Ninguém falou de loja",
+    "pergunta": "O app precisa estar na App Store ou na Play Store?",
+    "efeito": {"troca": {"lojas": "normal"}}
+  }
+]
 ```
-| # | O que ficou ambíguo | Pergunta para o cliente | Se sim | Se não |
-| 1 | Tela "Relatórios" está no protótipo, ninguém falou dela | "O relatório de vendas entra no MVP?" | +1,25 sem. | 0 |
-```
 
-No máximo 5 por rodada, as que mais mexem no prazo primeiro. Com o CN respondendo no chat, trocar o valor, mudar a origem para `(CN, no chat)` e rodar o script de novo. Sem resposta, a proposta sai com elas na seção 11 e o status ⚠️.
+Efeitos possíveis (podem se combinar no mesmo item):
+
+| Efeito | Para quê |
+|---|---|
+| `"jornada": {"tipo": "comuns" \| "rn_especifica" \| "atipicas", "formato": ..., "quantas": n}` | Jornada ou feature que ainda não está na conta |
+| `"vira_rn_especifica": {"formato": ..., "quantas": n}` | Jornada já contada como comum que vira RN específica |
+| `"integracao": "<linha>"` | Integração citada de forma vaga |
+| `"troca": {"campo": valor}` | Qualquer outro fator (lojas, atipico, multitenancy, offline…) |
+
+O script imprime a venda "**+ até X** que dependem de N perguntas em aberto" e, para cada pergunta, quanto ela soma no provável e na venda (e se vira 🚩). Na resposta ao CN, mostrar **as 5 que mais mexem no prazo** primeiro; todas vão para a seção 11 da proposta.
+
+Com o CN respondendo no chat: resposta **sim** → aplicar o efeito no JSON e tirar o item; **não** → só tirar o item. Mudar a origem para `(CN, no chat)` e rodar o script de novo. **Enquanto houver item em `a_confirmar`, o status é ⚠️** e a proposta não vai para o cliente.
 
 ---
 

@@ -25,14 +25,14 @@ Todo critério segue o mesmo formato, para que o Claude não precise interpretar
 | Campo | O que é |
 |---|---|
 | **Pergunta** | Sim ou não. Nunca "muito", "pouco", "grande" |
-| **Onde ler** | Seção da PRD ou fala do Fathom que responde |
-| **Sem resposta** | O que fazer quando nem a PRD nem o Fathom respondem. Quase sempre: linha mais pesada + lacuna para o CN |
+| **Onde ler** | A fala da transcrição (ou a tela do protótipo) que responde. A seção da PRD aparece só como "na revalidação" |
+| **Sem resposta** | O valor que vai na venda e a pergunta que vai para `a_confirmar`. A tabela única do silêncio está em `leitura-transcricoes-prototipo.md`, Passo 4 |
 
-**Regra de citação:** a skill só escolhe a linha mais leve quando consegue citar o trecho da transcrição (ou a tela do protótipo) que a justifica. Sem citação, vai para a linha mais pesada.
+**Entrada padrão desde 22/10/2026: transcrições + protótipo.** A PRD só entra na revalidação, depois do contrato.
 
-**Entrada padrão desde 22/10/2026: transcrições + protótipo.** Nas colunas *Onde ler* dos arquivos de fator, "Fathom" = as transcrições das reuniões de diagnóstico, e as seções da PRD (2.1, Superfície, RNs, 3.1…) valem só quando já existe PRD. No caminho padrão, o lugar equivalente de cada campo está em `leitura-transcricoes-prototipo.md`, Passo 4 (ex.: "PRD 2.1" → menus por perfil no protótipo + falas sobre quem usa; "Superfície" → em que código a jornada vive, pela transcrição).
+**Regra de citação (revista em 22/10/2026):** o valor que vai para a venda precisa de citação. O que não tem citação **não** sobe para a linha mais pesada: fica no valor do silêncio (Passo 4 de `leitura-transcricoes-prototipo.md`) e vira pergunta em `a_confirmar`, que o script calcula **fora** da venda ("vender 14 + até 4"). A linha mais pesada só vale para **classificar** um fator que foi citado e encaixa em duas linhas (`regra-fronteira-e-faixa.md`).
 
-**Regra de campo vazio:** nenhum fator tem valor padrão. Se um campo do JSON não foi preenchido, a conta não roda (ajuste pendente no `calcular_faixa.py`).
+**Regra de campo vazio:** nenhum fator tem valor padrão. Se um campo do JSON não foi preenchido, a conta não roda.
 
 ---
 

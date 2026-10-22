@@ -19,9 +19,9 @@ O caminho completo deste arquivo vale quando **não há transcrição**: o formu
 
 ## Passo 2 — Preencher os fatores, perguntando o que faltar
 
-**Se veio transcrição do Fathom (ou de outra ferramenta):** procurar a resposta de cada pergunta nela antes de perguntar, com a regra zero de `leitura-transcricoes-prototipo.md` (só vale o que foi dito explicitamente, citar a reunião e o trecho). O que não estiver lá vira **lacuna** em *Lacunas para o CN*. Stack, infra e referência de produto que ficarem como lacuna seguem o Passo 3 de `leitura-transcricoes-prototipo.md` (fator de projeto sem resposta): valor mais pesado na conta, o fator em `lacunas_fathom` no JSON e o "+" na venda. Quem valida sem resposta vira `f0.sem_validador_nomeado: true` (🚩).
+**Se veio transcrição do Fathom (ou de outra ferramenta):** procurar a resposta de cada pergunta nela antes de perguntar, com a regra zero de `leitura-transcricoes-prototipo.md` (só vale o que foi dito explicitamente, citar a reunião e o trecho). O que não estiver lá fica no **valor do silêncio** (tabela do Passo 4 de `leitura-transcricoes-prototipo.md`) e vira pergunta em `a_confirmar`, fora da venda ("+ até X"). Quem valida sem resposta vira `f0.sem_validador_nomeado: true` (🚩).
 
-**Critérios completos e pesos:** no arquivo de cada fase em `fatores/`. A tabela abaixo é o atalho das perguntas para o CN. **O JSON exige todos os campos**, inclusive o bloco `"f0"` (formato em `exemplos/*.json`): o que ninguém respondeu entra com o valor mais pesado e vai para *Suposições*.
+**Critérios completos e pesos:** no arquivo de cada fase em `fatores/`. A tabela abaixo é o atalho das perguntas para o CN. **O JSON exige todos os campos**, inclusive o bloco `"f0"` (formato em `exemplos/*.json`): o que ninguém respondeu entra com o valor do silêncio (`leitura-transcricoes-prototipo.md`, Passo 4), vai para *Suposições* e vira pergunta em `a_confirmar`.
 
 **Primeiro o F0** (`fatores/F0-viabilidade.md`): se o cliente exige tecnologia fora da lista aceita ou offline com sincronização em MongoDB, o projeto é rejeitado e não há o que perguntar do resto.
 
@@ -82,4 +82,4 @@ Se o CN já preencheu as seções 7 e 8 do formulário, comparar com a faixa da 
 ## Quando parar e devolver para o CN
 
 - Faltam os **fluxos críticos** ou o **formato**: sem eles, não dimensionar (são os fatores que mais mexem no prazo). Devolver as perguntas.
-- O CN respondeu "não sei" para 3 ou mais fatores: dimensionar com valores pesados, marcar ⚠️ e listar as perguntas em *Lacunas para o CN*.
+- O CN respondeu "não sei" para 3 ou mais fatores: dimensionar com os valores do silêncio, pôr cada dúvida em `a_confirmar` (o script mostra "+ até X") e marcar ⚠️.

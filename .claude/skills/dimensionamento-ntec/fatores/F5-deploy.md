@@ -23,9 +23,9 @@ Os itens 5.1 a 5.3 saem direto do formato (`F3-desenvolvimento.md`, item 3.2). N
 
 | Pergunta | Onde ler | Sem resposta |
 |---|---|---|
-| A conta de nuvem ou o servidor onde o sistema vai rodar é **do cliente**? | PRD 3.1; Fathom ("nossos servidores", "a nossa TI hospeda") | `false`, se a PRD 3.1 existe e não fala de infra. Sem PRD → lacuna: "O sistema vai ficar nos servidores ou na nuvem do cliente?" |
-| A TI do cliente precisa **aprovar cada publicação**, ou exige um pipeline de deploy próprio? | Fathom | Idem |
+| A conta de nuvem ou o servidor onde o sistema vai rodar é **do cliente**? | Transcrições ("nossos servidores", "a nossa TI hospeda", "tem que ficar na nossa AWS"). Na revalidação: PRD 3.1 | `false` (infra do NTec) + pergunta em `a_confirmar`: "O sistema vai ficar nos servidores ou na nuvem do cliente?", com `"troca": {"deploy_infra_cliente": true}` |
+| A TI do cliente precisa **aprovar cada publicação**, ou exige um pipeline de deploy próprio? | Transcrições | `false` (vale a mesma pergunta acima) |
 
-Infra do cliente **sem acesso do time do NTec** para publicar e corrigir → **F0** (rejeitado).
+Infra do cliente **sem acesso do time do NTec** para publicar e corrigir → **F0**, 📝 ajuste de contrato (desde 22/10/2026 **não rejeita**): o projeto perde a garantia de 30 dias e o contrato diz isso. O F5 continua com 5.4 = `true`.
 
 **Alerta:** pedir os acessos e as regras de deploy do cliente **já na imersão**.

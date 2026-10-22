@@ -22,7 +22,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from calcular_faixa import EntradaInvalida, calcular, fmt, parte_lacunas, semanas, sprints  # noqa: E402
+from calcular_faixa import EntradaInvalida, calcular, fmt, parte_a_confirmar, semanas, sinal, sprints  # noqa: E402
 
 OBRIGATORIAS = {4, 6, 8, 10, 11, 14}
 STATUS = {
@@ -101,8 +101,8 @@ def montar(d, r):
     dim = d.get("dimensionamento", {})
     projeto = d.get("projeto", dim.get("entrada", {}).get("projeto", "Projeto"))
     venda = sprints(r["provavel"]) * 2
-    parte = parte_lacunas(dim.get("entrada", {}), r)
-    parte = f" **{parte}** (lacunas na seção 11)" if parte else ""
+    parte = parte_a_confirmar(r)
+    parte = f" **{parte}** (seção 11)" if parte else ""
 
     s.append(f"# Proposta Técnica — {projeto}")
     s.append("*Padrão de documentação · NTec · Comercial → Validação de Projeto*")
@@ -184,6 +184,12 @@ def montar(d, r):
     # 11
     s.append(titulo(11, "Pontos em aberto para validação conjunta"))
     s.append(bullets(d["pontos_abertos"]) if d.get("pontos_abertos") else "**Alerta:** nenhum ponto em aberto listado.")
+    if r["a_confirmar"]:
+        s.append("**Perguntas que mudam o prazo** (fora do prazo recomendado; calculadas pela régua):")
+        s.append(tabela(["#", "O que ficou ambíguo", "Pergunta para o cliente", "Se sim"], [
+            [n, p["o_que"], p["pergunta"],
+             f"{sinal(p['venda'])} semanas na venda" + (" · 🚩 vira parada" if p["paradas"] else "")]
+            for n, p in enumerate(r["a_confirmar"], 1)]))
     # 12
     s.append(titulo(12, "Stack de execução proposta"))
     st = d.get("stack", {})
@@ -292,7 +298,7 @@ def main():
         f.write(montar(d, r))
 
     venda = sprints(r["provavel"]) * 2
-    parte = parte_lacunas(entrada, r)
+    parte = parte_a_confirmar(r)
     print(f"Proposta: {destino}")
     print(f"Faixa: otimista {semanas(r['otimista'])} · provável {semanas(r['provavel'])} · "
           f"conservador {semanas(r['conservador'])} · vender {venda} semanas ({venda // 2} sprints)")

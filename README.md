@@ -63,6 +63,10 @@ skill-dimensionamento-ntec/
 
 Resumo das conversas que criaram e evoluíram a skill (16 e 17/10/2026), para continuar em outra conversa sem precisar do histórico. **Comece por "Onde paramos".**
 
+### Onde paramos (22/10/2026)
+- **Revisão de 22/10 (decisões do Matheus sobre a reunião "Validação Entregas Tec"):** (1) **jornada com regra fechada**: perfil + objetivo + entidade principal; cadastro auxiliar não conta; 3+ entidades ou 6+ telas próprias contam 2 (`fatores/glossario.md`); (2) tela que só passou na demo, sem o cliente falar dela, **não conta**; (3) **nenhuma dúvida entra na venda**: o campo fica no valor do silêncio (tabela única no Passo 4 de `leitura-transcricoes-prototipo.md`) e a dúvida vai para **`a_confirmar`**, que o script calcula fora da venda ("vender 14 + até 4"), com status ⚠️ até o CN responder; `lacunas_fathom` saiu; (4) só o resumo da reunião, sem transcrição → ⚠️ preliminar. Glossário e F1 a F6 reescritos para transcrição + protótipo (PRD só "na revalidação"); F5 corrigido (infra sem acesso não rejeita). Pesos inalterados: Projetos A a D continuam em 12, 14, 18 e 18.
+- **Próximo passo:** rodar o CTE com as transcrições e o protótipo (esperado 13 a 14 sprints) e calibrar os limites da jornada (3 entidades, 6 telas).
+
 ### Onde paramos (21/10/2026)
 - **Revisão de 20/10 (reunião "Validação Skill NTec" + LLM Council):** **F0 de viabilidade** antes de tudo (🚫 rejeita ou 🚩 para para a área de projetos); critérios e pesos em **`fatores/`**, um arquivo por fase; **nenhum campo do JSON com padrão** (o script para se faltar um); tetos de fase não cortam a soma; **fator Claude Code e "cliente com pouca disponibilidade" removidos** (quem valida passou para o F0); F2 em 2 a 5 / 6+; formato extra +0,2; `bi_sem_doc` com mínimo 4. `SKILL.md`, `regua-dimensionamento.md`, `leitura-prd.md` e `insumos-e-perguntas.md` já apontam para `fatores/`.
 - **Em aberto:** decisões D1 a D5 (`fatores/README.md`) e os pesos marcados 🔎, a validar com Augusto e Frank. Até lá, o script usa os valores provisórios.
@@ -93,6 +97,8 @@ Histórico de 17/10/2026:
 | 17/10/2026 | Fator Claude Code (primeiro x0,5, depois o meio-termo x0,75 no núcleo do F3); PDF explicativo v4 |
 | 17/10/2026 | Venda com "+" para as lacunas do Fathom ("14 = 12 + 2 que dependem do Fathom"), igual na skill e na página |
 | 21/10/2026 | Revisão de 20/10: F0, `fatores/` por fase, JSON sem padrões, tetos sem corte, fator Claude Code e disponibilidade do cliente removidos; documentos apontando para `fatores/` |
+| 22/10/2026 | Entrada = transcrições + protótipo; F0 revisto; proposta em Markdown |
+| 22/10/2026 | Jornada com regra fechada; dúvidas fora da venda em `a_confirmar` ("+ até X"); `lacunas_fathom` removido; glossário e F1–F6 para transcrição + protótipo |
 
 ### O que foi pedido (origem)
 Criar, para o NTec, uma skill parecida com a do NCiv da Gabi Lobo, que leve em conta que somos uma **empresa júnior**, use os dados reais dos projetos e chegue a uma **faixa de semanas**. O uso deve ser **prático para CNs**, que em geral são fracos tecnicamente e mandam para a equipe de projetos prazos sem sentido.

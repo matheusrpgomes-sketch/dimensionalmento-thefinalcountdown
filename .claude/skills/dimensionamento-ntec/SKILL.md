@@ -34,15 +34,19 @@ A área de projetos sempre revisa o resultado antes de virar proposta. A skill e
 1. **Ler a entrada** (`leitura-transcricoes-prototipo.md`).
    - **Transcrições + protótipo:** caminho padrão. Numerar as transcrições (T1, T2…) por data e montar o inventário de telas do protótipo (Passo 2).
    - **Só transcrições:** dimensionar e marcar ⚠️ *Estimativa preliminar: falta o protótipo*. Pedir o protótipo.
+   - **Só o resumo das reuniões** (Gemini, Fathom), sem transcrição: dimensionar como ⚠️ *Estimativa preliminar*, citando `(resumo T1)`, e pedir a transcrição completa.
    - **Só protótipo:** não dimensionar. Pedir as transcrições (o protótipo não responde nada do projeto).
    - **Formulário, ficha ou briefing sem transcrição:** `insumos-e-perguntas.md`, status ⚠️ preliminar.
    - **PRD junto:** só conferência (`leitura-prd.md`). Divergência com transcrição/protótipo vai para *Pontos de atenção*.
 2. **F0 — Viabilidade** (`fatores/F0-viabilidade.md`). Responder cada critério com citação da transcrição. Critério de 🚫 rejeição → **parar aqui**: não preencher F1 a F6, não gerar proposta e responder ao CN no formato do fim do F0. Critério de 🚩 parada → seguir dimensionando, mas o status fica 🚩 e a proposta não vai para o cliente antes da área de projetos responder. Critério de contrato (SLA/suporte 24/7, infra sem acesso) → só alerta.
-3. **Cruzar protótipo × transcrição** (`leitura-transcricoes-prototipo.md`, Passo 3) e **preencher F1 a F6**, cada um pelo seu arquivo em `fatores/`. Contar **jornadas**, nunca telas nem módulos. **Regra de citação:** a linha mais leve só entra com o trecho que a justifica; sem citação, vai a mais pesada. Duas regras diferentes:
-   - **Escopo ambíguo** (não se sabe *se* a jornada entra, ex.: tela do protótipo que ninguém citou): **não conta**. Vira pergunta para o CN com o custo dela, na seção 11.
-   - **Fator de projeto sem resposta** (quem valida, stack, lojas, referência, infra): valor mais pesado + `lacunas_fathom` no JSON (o script mostra com "+" quantas semanas dependem dela) + pergunta pronta em *Lacunas para o CN*.
-   **Integrações não geram pergunta:** peso fixo de `fatores/F3-integracoes.md`. No máximo 5 perguntas por rodada, as que mais mexem no prazo primeiro.
-4. **Montar o JSON** de entrada no formato dos `exemplos/*.json`: o bloco `"f0"` e **todos** os campos de F1 a F6. Nenhum campo tem padrão: se faltar um, o script para e diz qual. Rodar:
+3. **Cruzar protótipo × transcrição** (`leitura-transcricoes-prototipo.md`, Passo 3) e **preencher F1 a F6**, cada um pelo seu arquivo em `fatores/`. Contar **jornadas** pela regra fechada do glossário (perfil + objetivo + entidade principal; cadastro auxiliar não conta; 3+ entidades ou 6+ telas próprias contam 2), nunca telas nem módulos. **Regra de citação (22/10/2026):** só entra na venda o que tem citação. **Toda dúvida fica fora da venda:**
+   - **Escopo ambíguo** (jornada ou perfil só no protótipo, tela que passou na demo sem o cliente falar dela, integração ou regra citada de forma vaga): **não conta**.
+   - **Fator de projeto sem resposta** (stack, infra, lojas, referência, multitenancy sem detalhe): entra com o **valor do silêncio** (tabela do Passo 4 de `leitura-transcricoes-prototipo.md`), não com o mais pesado.
+   - Os dois viram item de **`a_confirmar`** no JSON, com o efeito se a resposta for sim. O script calcula o custo de cada um e a venda sai "**+ até X**". Enquanto houver item em aberto, o status é ⚠️.
+   - **Exceção:** ninguém nomeado para validar → `f0.sem_validador_nomeado: true` (🚩, não soma semanas).
+   - A **linha mais pesada** só serve para classificar um fator **citado** que encaixa em duas linhas (fronteira), nunca para decidir se algo entra.
+   **Integrações não geram pergunta sobre documentação:** peso fixo de `fatores/F3-integracoes.md`.
+4. **Montar o JSON** de entrada no formato dos `exemplos/*.json`: o bloco `"f0"`, **todos** os campos de F1 a F6 e o `a_confirmar` (formato no Passo 5 de `leitura-transcricoes-prototipo.md`). Nenhum campo tem padrão: se faltar um, o script para e diz qual. Rodar:
    ```bash
    python scripts/calcular_faixa.py entrada.json
    ```
@@ -58,9 +62,9 @@ A área de projetos sempre revisa o resultado antes de virar proposta. A skill e
 
 ## Regras gerais
 
-- **Sem alucinação de contexto.** Todo fator, jornada, perfil e regra tem a origem ao lado: `(T1 · 00:12:30 — "trecho")`, `(Protótipo · tela "Agenda")`, `(CN, no chat)`, `(lacuna — não está nas transcrições)`, `(suposição da skill)`. Não completar o produto com o que "normalmente tem". Dado fictício do protótipo não prova integração. Citação que não se acha de novo no texto não existe.
-- **Nunca inventar número nem fator.** Fator de projeto desconhecido → lacuna para o CN, com o valor mais pesado na conta + *Suposições*. No NTec, o erro histórico é vender para menos (Projeto C: vendido 11, levou ~14).
-- **Ambiguidade não é gordura.** Escopo duvidoso vira pergunta com custo, não semana a mais (Projeto CTE, 22/10/2026: ambiguidades viraram margem e deram 17 sprints).
+- **Sem alucinação de contexto.** Todo fator, jornada, perfil e regra tem a origem ao lado: `(T1 · 00:12:30 — "trecho")`, `(Protótipo · tela "Agenda")`, `(CN, no chat)`, `(silêncio — valor do Passo 4)`, `(fronteira — linha mais pesada)`. Não completar o produto com o que "normalmente tem". Dado fictício do protótipo não prova integração. Silêncio do cliente não é aceite. Citação que não se acha de novo no texto não existe.
+- **Nunca inventar número nem fator.** O que as reuniões não decidem vai para `a_confirmar`, e o custo sai do script, nunca de cabeça.
+- **Ambiguidade não é gordura.** Dúvida fica fora da venda, como pergunta com custo (Projeto CTE, 22/10/2026: ambiguidades viraram margem e deram 17 sprints, com 13 a 14 esperadas). **E também não é desconto:** enquanto houver pergunta em aberto, o status é ⚠️ e a proposta não vai ao cliente, porque o erro histórico do NTec é vender para menos (Projeto C: vendido 11, levou ~14).
 - **Só os fatores contam.** O prazo sai do F0 ao F6 e dos multiplicadores de `fatores/`, nada além disso: nem faixa de portfólio, nem prazo pedido pelo cliente, nem palpite do CN.
 - **Restrição técnica → F0, não aumentar prazo.** Multitenancy com regra diferente por tenant (parada obrigatória), integração com sistema sem API, feature sem referência nem documentação e dependência de hardware viram 🚩 no F0, não "+3 semanas".
 - **Sempre trazer a seção "O que cortar".** Cada corte é uma jornada ou uma integração que está na conta, nunca algo que o cliente já tirou.
@@ -88,7 +92,7 @@ O dimensionamento final sai **no template "Proposta Técnica" do NTec** (Comerci
 Onde o dimensionamento aparece no corpo do template:
 - **Caixa de status** (topo): status, prazo recomendado, a faixa e os insumos (transcrições, protótipo; a PRD aparece como "gerada depois da assinatura").
 - **10. Roadmap:** tudo que está na conta é *Prioritário*. *A confirmar* (inclui as jornadas só do protótipo) e *Futuro* nunca entram no cronograma (o script confere).
-- **11. Pontos em aberto:** as perguntas de escopo com custo, as lacunas de fatores e toda dependência externa. Nunca vazio.
+- **11. Pontos em aberto:** a tabela "Perguntas que mudam o prazo" (gerada pelo script a partir de `a_confirmar`) e toda dependência externa. Nunca vazio.
 - **13. Cronograma sprint a sprint:** as fases F1 a F6 (valores centrais) distribuídas em sprints de 2 semanas, somando a recomendação de venda.
 
 **O que a skill não inventa no template:** conteúdo do protótipo que ela não conseguiu abrir (a seção 14 sai com o aviso e o checklist fica PENDENTE), responsável comercial e data de envio (em branco, para o CN), e histórico, logs ou permissões que ninguém citou (escrever "não citado nas reuniões").
@@ -99,13 +103,13 @@ Público: um CN que talvez nunca tenha programado.
 
 1. `# Projeto [nome do cliente ou produto]`
 2. **Status**, uma linha: ✅ Pronto para proposta · ⚠️ Precisa de revisão da área de projetos (inclui "⚠️ Estimativa preliminar" e "⚠️ Demanda pouco detalhada") · 🚩 Parado · 🚫 Rejeitado no F0 (nesse caso, a resposta é só o bloco do fim de `fatores/F0-viabilidade.md`, sem os itens 3 a 8).
-3. **Prazo em uma frase.** Ex.: *"Recomendado vender 18 semanas (9 sprints), mais as semanas off. Não vender abaixo de 13."* Com lacuna que mexe na venda, usar a frase do script, com "+": *"Recomendado vender 18 semanas (9 sprints) = 16 + 2 que dependem de confirmar com o cliente (referência de produto), mais as semanas off."*
+3. **Prazo em uma frase.** Ex.: *"Recomendado vender 18 semanas (9 sprints), mais as semanas off. Não vender abaixo de 13."* Com perguntas em aberto, usar a frase do script, com "+ até": *"Recomendado vender 16 semanas (8 sprints) + até 4 que dependem de 3 perguntas em aberto, mais as semanas off."*
 4. **Faixa:** otimista · provável · conservador, em semanas e sprints.
 5. **Caminho do arquivo** "[Proposta Técnica] {projeto}.md".
-6. **Perguntas para o CN**, numa tabela só: `# | O que ficou ambíguo ou sem resposta | Pergunta para o cliente | Efeito na conta`. Inclui as jornadas *A confirmar* e as lacunas de fatores. Ou `Sem perguntas: tudo veio das transcrições e do protótipo.`
+6. **Perguntas para o CN**, numa tabela só, copiada da saída do script (as 5 que mais mexem no prazo primeiro): `# | O que ficou ambíguo | Pergunta para o cliente | Se sim: venda`. Ou `Sem perguntas: tudo veio das transcrições e do protótipo.`
 7. **Itens PENDENTES do checklist**, com o que o CN precisa fazer.
 8. **Os 2 ou 3 pontos de atenção mais graves**, uma linha cada.
 
 ## Status da skill
 
-Versão inicial (16/10/2026). Revisão de 20/10/2026: F0 de viabilidade antes de tudo, um arquivo por fator em `fatores/`, nenhum campo do JSON com padrão, tetos que não cortam a soma. Revisão de 22/10/2026 (Projeto G): fluxo = jornada, fator de formato por fluxo (`fluxos_por_formato`). **Revisão de 22/10/2026 (reunião "Validação Entregas Tec", Projeto CTE):** a entrada padrão passa a ser transcrições + protótipo navegável, e a PRD vem por último; ambiguidade de escopo vira pergunta, não gordura; regra zero contra alucinação; F0 sem multa por atraso, SLA/24-7 e infra sem acesso viram ajuste de contrato, multitenancy por tenant é parada obrigatória; proposta em Markdown no lugar do PDF. Pesos inalterados. Pendente: (1) testar o novo fluxo com as transcrições e o protótipo de um projeto real e comparar com o número da área de projetos; (2) fichas técnicas dos Projetos E e F para calibrar projetos grandes; (3) a proposta do Projeto CTE para comparar com o dimensionamento.
+Versão inicial (16/10/2026). Revisão de 20/10/2026: F0 de viabilidade antes de tudo, um arquivo por fator em `fatores/`, nenhum campo do JSON com padrão, tetos que não cortam a soma. Revisão de 22/10/2026 (Projeto G): fluxo = jornada, fator de formato por fluxo (`fluxos_por_formato`). **Revisão de 22/10/2026 (reunião "Validação Entregas Tec", Projeto CTE):** a entrada padrão passa a ser transcrições + protótipo navegável, e a PRD vem por último; ambiguidade de escopo vira pergunta, não gordura; regra zero contra alucinação; F0 sem multa por atraso, SLA/24-7 e infra sem acesso viram ajuste de contrato, multitenancy por tenant é parada obrigatória; proposta em Markdown no lugar do PDF. **Revisão de 22/10/2026 (decisões do Matheus):** jornada com regra fechada; tela que só passou na demo não conta; nenhuma dúvida entra na venda (`a_confirmar`, "+ até X"; `lacunas_fathom` saiu); só o resumo da reunião → preliminar; glossário e F1 a F6 escritos para transcrição + protótipo. Pesos inalterados. Pendente: (1) testar o novo fluxo com as transcrições e o protótipo de um projeto real e comparar com o número da área de projetos; (2) fichas técnicas dos Projetos E e F para calibrar projetos grandes; (3) a proposta do Projeto CTE para comparar com o dimensionamento.

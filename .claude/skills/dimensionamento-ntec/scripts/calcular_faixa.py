@@ -28,8 +28,15 @@ ser as transcrições das reuniões de diagnóstico + o protótipo navegável (a
 depois do contrato). F0: multa por atraso sai (não existe nos contratos do NTec);
 SLA/suporte 24/7 e infra do cliente sem acesso deixam de rejeitar e viram avisos de
 contrato; multitenancy com regra por tenant é parada obrigatória.
+
+Revisão de 22/10/2026 (decisões do Matheus sobre a reunião): nenhuma dúvida entra na
+venda. A entrada traz só o que tem citação (o silêncio de cada campo está em
+`leitura-transcricoes-prototipo.md`, Passo 4); cada dúvida vai em `a_confirmar`, com o
+efeito se a resposta for sim. O script calcula o custo de cada uma e mostra a venda
+"+ até X". `lacunas_fathom` (lacuna no valor mais pesado dentro da venda) saiu.
 """
 
+import copy
 import json
 import math
 import sys
@@ -137,20 +144,21 @@ RENOMEADOS = {
 REMOVIDOS = {
     "claude_code": "fator Claude Code removido em 20/10/2026",
     "cliente_pouca_disponibilidade": "fator removido em 20/10/2026 (quem valida vai para o F0)",
+    "lacunas_fathom": "substituído por a_confirmar em 22/10/2026; dúvida não entra na venda: "
+                      "pôr o valor do silêncio no campo e a dúvida em a_confirmar",
 }
 
-# Fatores que nem as transcrições nem o protótipo responderam (leitura-transcricoes-prototipo.md).
-# O nome `lacunas_fathom` ficou por compatibilidade: Fathom = as transcrições das reuniões.
-# Lacuna entra na conta com o valor mais pesado; a parte da venda que depende dela aparece
-# com "+" ("vender 14 semanas = 12 + 2 que dependem de confirmar com o cliente").
-LACUNAS_FATHOM = {
-    "atipico": "referência de produto",
-    "stack_fora_template": "tecnologia exigida",
-    "deploy_infra_cliente": "servidores do cliente",
-    "lojas": "publicação nas lojas",
-}
-# Valor leve de cada lacuna: com ele o script refaz a conta para mostrar o "+".
-LACUNAS_LEVE = {"atipico": False, "stack_fora_template": False, "deploy_infra_cliente": False, "lojas": "nao"}
+# Perguntas em aberto (leitura-transcricoes-prototipo.md, Passo 5). Cada item:
+#   {"o_que": "...", "pergunta": "...", "efeito": {...}}
+# e o efeito, se a resposta for sim, é uma ou mais destas chaves:
+#   "jornada":    {"tipo": "comuns" | "rn_especifica" | "atipicas", "formato": "web" | "pwa" | "app" | "compartilhado",
+#                  "quantas": n}  (soma n jornadas no total e em fluxos_por_formato)
+#   "vira_rn_especifica": {"formato": ..., "quantas": n}  (n jornadas comuns já contadas passam a RN específica)
+#   "integracao": "uni_doc" | "bi_doc" | "uni_sem_doc" | "bi_sem_doc" | "sem_api"
+#   "troca":      {campo: valor}  (campos de OPCOES ou BOOLEANOS; ex.: {"lojas": "normal"})
+# A venda não inclui nenhuma; o script mostra quanto cada uma soma e o "+ até X" de todas juntas.
+A_CONFIRMAR_TROCA = set(OPCOES) | set(BOOLEANOS)
+A_CONFIRMAR_EFEITOS = ("jornada", "vira_rn_especifica", "integracao", "troca")
 
 
 class EntradaInvalida(ValueError):
@@ -217,8 +225,94 @@ def validar(e):
             erros.append(f"{campo}: tirar do JSON ({motivo})")
     if not erros:
         erros += validar_fluxos_por_formato(e)
+    if not erros:
+        erros += validar_a_confirmar(e)
     if erros:
         raise EntradaInvalida("Entrada incompleta ou inválida:\n  - " + "\n  - ".join(erros))
+
+
+def validar_a_confirmar(e):
+    """Cada pergunta em aberto precisa dizer o que é, a pergunta e o efeito se a resposta for sim."""
+    itens = e.get("a_confirmar", [])
+    if not isinstance(itens, list):
+        return ["a_confirmar: tem de ser uma lista (usar [] ou tirar se não houver perguntas)"]
+    erros = []
+    for n, item in enumerate(itens, 1):
+        nome = f"a_confirmar[{n}]"
+        if not isinstance(item, dict):
+            erros.append(f"{nome}: tem de ser um objeto com o_que, pergunta e efeito")
+            continue
+        for campo in ("o_que", "pergunta"):
+            if not isinstance(item.get(campo), str) or not item[campo].strip():
+                erros.append(f"{nome}.{campo}: ausente")
+        efeito = item.get("efeito")
+        if not isinstance(efeito, dict) or not efeito:
+            erros.append(f"{nome}.efeito: ausente (jornada, vira_rn_especifica, integracao e/ou troca)")
+            continue
+        for chave in efeito:
+            if chave not in A_CONFIRMAR_EFEITOS:
+                erros.append(f"{nome}.efeito.{chave}: não é um destes: {', '.join(A_CONFIRMAR_EFEITOS)}")
+        aceitos = set(e["formatos"]) | ({F3_COMPARTILHADO} if len(e["formatos"]) > 1 else set())
+        for chave in ("jornada", "vira_rn_especifica"):
+            if chave not in efeito:
+                continue
+            j = efeito[chave]
+            if not isinstance(j, dict):
+                erros.append(f"{nome}.efeito.{chave}: tem de ser um objeto")
+                continue
+            if chave == "jornada" and j.get("tipo") not in F3_TIPOS_FLUXO:
+                erros.append(f"{nome}.efeito.jornada.tipo: não é um destes: {', '.join(F3_TIPOS_FLUXO)}")
+            if j.get("formato") not in aceitos:
+                erros.append(f"{nome}.efeito.{chave}.formato: não é um destes: {', '.join(sorted(aceitos))}")
+                continue
+            q = j.get("quantas")
+            if not isinstance(q, int) or isinstance(q, bool) or q < 1:
+                erros.append(f"{nome}.efeito.{chave}.quantas: ausente ou não é um inteiro >= 1")
+            elif chave == "vira_rn_especifica":
+                comuns = (e["fluxos_comuns"] if len(e["formatos"]) == 1
+                          else e["fluxos_por_formato"].get(j["formato"], {}).get("comuns", 0))
+                if q > comuns:
+                    erros.append(f"{nome}.efeito.vira_rn_especifica: só há {comuns} jornada(s) comum(ns) em "
+                                 f"'{j['formato']}' para virar RN específica")
+        if "integracao" in efeito and efeito["integracao"] not in F3_INTEGRACAO:
+            erros.append(f"{nome}.efeito.integracao: não é um destes: {', '.join(sorted(F3_INTEGRACAO))}")
+        if "troca" in efeito:
+            troca = efeito["troca"]
+            if not isinstance(troca, dict) or not troca:
+                erros.append(f"{nome}.efeito.troca: tem de ser um objeto {{campo: valor}}")
+                continue
+            for campo, valor in troca.items():
+                if campo not in A_CONFIRMAR_TROCA:
+                    erros.append(f"{nome}.efeito.troca.{campo}: não pode ser trocado (jornadas vão em 'jornada')")
+                elif campo in OPCOES and valor not in OPCOES[campo]:
+                    erros.append(f"{nome}.efeito.troca.{campo}: '{valor}' não é um destes: "
+                                 f"{', '.join(sorted(OPCOES[campo]))}")
+                elif campo in BOOLEANOS and not isinstance(valor, bool):
+                    erros.append(f"{nome}.efeito.troca.{campo}: tem de ser true/false")
+    return erros
+
+
+def aplicar(e, efeito):
+    """Entrada como ficaria se a resposta à pergunta fosse sim."""
+    novo = copy.deepcopy(e)
+    if "jornada" in efeito:
+        j = efeito["jornada"]
+        novo[F3_TIPOS_FLUXO[j["tipo"]]] += j["quantas"]
+        if len(novo["formatos"]) > 1:
+            dist = novo["fluxos_por_formato"]
+            dist.setdefault(j["formato"], {t: 0 for t in F3_TIPOS_FLUXO})[j["tipo"]] += j["quantas"]
+    if "vira_rn_especifica" in efeito:
+        j = efeito["vira_rn_especifica"]
+        novo["fluxos_comuns"] -= j["quantas"]
+        novo["fluxos_rn_especifica"] += j["quantas"]
+        if len(novo["formatos"]) > 1:
+            cont = novo["fluxos_por_formato"][j["formato"]]
+            cont["comuns"] -= j["quantas"]
+            cont["rn_especifica"] += j["quantas"]
+    if "integracao" in efeito:
+        novo["integracoes"].append(efeito["integracao"])
+    novo.update(efeito.get("troca", {}))
+    return novo
 
 
 def validar_fluxos_por_formato(e):
@@ -301,9 +395,6 @@ def calcular(e):
     if e["stack_fora_template"]:
         f1.append(F1_STACK_FORA_TEMPLATE)
         alertas.append("Troca de stack aceita no F0: confirmar com a área de projetos se o time domina.")
-        if "stack_fora_template" in e.get("lacunas_fathom", []):
-            alertas.append("Tecnologia exigida ainda não confirmada: se estiver fora da lista aceita, o projeto "
-                           "é rejeitado no F0 (fatores/F0-viabilidade.md), não só mais lento.")
     f1 = teto("F1 (imersão e setup)", soma(*f1), F1_TETO, alertas)
 
     # F2 — F2a níveis de acesso + F2b multitenancy
@@ -407,12 +498,23 @@ def calcular(e):
         paradas.append(f"O cliente exige {fmt(prazo)} semanas, abaixo do otimista ({fmt(otimista)}): "
                        "não vender sem a área de projetos.")
 
-    # Parte da venda que depende das lacunas (o que as transcrições e o protótipo não responderam) (em sprints inteiras)
-    lacunas = [k for k in e.get("lacunas_fathom", []) if k in LACUNAS_FATHOM and e[k] != LACUNAS_LEVE[k]]
-    venda_confirmada = None
-    if lacunas:
-        confirmada = dict(e, lacunas_fathom=[], **{k: LACUNAS_LEVE[k] for k in lacunas})
-        venda_confirmada = venda(calcular(confirmada)["provavel"])
+    # Perguntas em aberto: fora da venda; o custo de cada uma sai da própria régua, nunca de cabeça.
+    perguntas, venda_com_todas = [], None
+    itens = e.get("a_confirmar", [])
+    if itens:
+        base = {k: v for k, v in e.items() if k != "a_confirmar"}
+        v0, todas = venda(provavel), base
+        for item in itens:
+            r = calcular(aplicar(base, item["efeito"]))
+            todas = aplicar(todas, item["efeito"])
+            perguntas.append({
+                "o_que": item["o_que"], "pergunta": item["pergunta"],
+                "provavel": r["provavel"] - provavel, "venda": venda(r["provavel"]) - v0,
+                "paradas": [p for p in r["paradas"] if p not in paradas],
+            })
+        venda_com_todas = venda(calcular(todas)["provavel"])
+        alertas.append(f"{len(itens)} {'pergunta' if len(itens) == 1 else 'perguntas'} em aberto (seção 11): "
+                       "status ⚠️, não enviar a proposta ao cliente antes das respostas.")
 
     return {
         "fases": fases,
@@ -425,8 +527,8 @@ def calcular(e):
         "avisos_internos": avisos_internos,
         "paradas": paradas,
         "rejeicoes": [],
-        "lacunas_na_conta": lacunas,
-        "venda_confirmada": venda_confirmada,
+        "a_confirmar": perguntas,
+        "venda_com_todas": venda_com_todas,
     }
 
 
@@ -443,13 +545,20 @@ def venda(provavel):
     return sprints(provavel) * 2
 
 
-def parte_lacunas(e, r):
-    """Complemento da venda com as lacunas ("= 12 + 2 que dependem de confirmar com o cliente (...)"), ou ""."""
-    v, vc = venda(r["provavel"]), r.get("venda_confirmada")
-    if vc is None or vc >= v:
+def parte_a_confirmar(r):
+    """Complemento da venda com as perguntas em aberto ("+ até 4 que dependem de 3 perguntas em aberto"), ou ""."""
+    n, vt = len(r["a_confirmar"]), r["venda_com_todas"]
+    if not n:
         return ""
-    nomes = ", ".join(LACUNAS_FATHOM[k] for k in r["lacunas_na_conta"])
-    return f"= {vc} + {v - vc} que dependem de confirmar com o cliente ({nomes})"
+    extra = vt - venda(r["provavel"])
+    qual = f"{n} {'pergunta' if n == 1 else 'perguntas'} em aberto"
+    if extra <= 0:
+        return f"({qual}, sem efeito na venda)"
+    return f"+ até {extra} que dependem de {qual}"
+
+
+def sinal(v):
+    return ("+" if v > 0 else "") + fmt(v)
 
 
 def fmt(v):
@@ -486,9 +595,17 @@ def imprimir(e, r):
         v = r[nome]
         print(f"| {rotulo} | {semanas(v)} ({fmt(round(v, 2))}) | {sprints(v)} |")
     v = venda(r["provavel"])
-    parte = parte_lacunas(e, r)
+    parte = parte_a_confirmar(r)
     print(f"\nRecomendação de venda: {v} semanas ({v // 2} sprints){' ' + parte if parte else ''}, "
           "mais as semanas off do calendário.")
+    if r["a_confirmar"]:
+        print("\nPerguntas em aberto (fora da venda):\n")
+        print("| # | O que ficou ambíguo | Pergunta para o cliente | Se sim: provável | Se sim: venda |")
+        print("|---|---|---|---|---|")
+        for n, p in enumerate(r["a_confirmar"], 1):
+            venda_txt = f"{sinal(p['venda'])} sem." + (" · 🚩 vira parada" if p["paradas"] else "")
+            print(f"| {n} | {p['o_que']} | {p['pergunta']} | {sinal(round(p['provavel'], 2))} sem. | {venda_txt} |")
+        print(f"\nCom todas as respostas sim: vender {r['venda_com_todas']} semanas.")
     if r["alertas"]:
         print("\nAlertas:")
         for a in r["alertas"]:

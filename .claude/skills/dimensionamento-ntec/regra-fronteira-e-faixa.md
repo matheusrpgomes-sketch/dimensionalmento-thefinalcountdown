@@ -2,6 +2,8 @@
 
 Vale quando um fator não cai claramente numa linha da régua, ou quando o cliente pede um prazo que não cabe na faixa. Não substitui a régua: resolve só o empate e sempre deixa rastro para a revisão da área de projetos.
 
+**Só para fator citado (22/10/2026).** A fronteira decide a linha de um fator que **as reuniões citaram** e que encaixa em duas linhas (ex.: falaram do ERP sem dizer o sentido → bidirecional). Ela **nunca** decide **se** uma jornada, perfil, integração ou fator entra na conta: o que ninguém citou fica no valor do silêncio e vai para `a_confirmar` (`leitura-transcricoes-prototipo.md`, Passos 4 e 5).
+
 ---
 
 ## 1. Direção padrão: sempre para o lado mais pesado

@@ -53,10 +53,9 @@ Exemplos de **rejeição** (✅ Reunião 20/10): .NET, Angular, COBOL, Delphi. T
 
 | Pergunta | Onde ler | Resultado |
 |---|---|---|
-| O cliente exige um prazo **menor que o cenário otimista** da skill? | Transcrições; briefing do CN | 🚩 Parar e consultar (a skill dimensiona, mas o status fica 🚩) |
-| O cliente exige **suporte 24/7, SLA ou sustentação** além da garantia de 30 dias? (`sla_ou_sustentacao`) | Transcrições | 📝 Não rejeita. Fica fora do prazo e vai para um **contrato de manutenção** à parte |
+| O cliente exige um prazo **menor que o cenário otimista** da skill? (`prazo_exigido_semanas`: semanas entre a **data de início prevista** citada na reunião e a data limite; sem data de início citada, contar a partir de hoje e dizer isso em *Suposições*) | Transcrições ("tem que estar pronto até…"); briefing do CN | 🚩 Parar e consultar (a skill dimensiona, mas o status fica 🚩) || O cliente exige **suporte 24/7, SLA ou sustentação** além da garantia de 30 dias? (`sla_ou_sustentacao`) | Transcrições | 📝 Não rejeita. Fica fora do prazo e vai para um **contrato de manutenção** à parte |
 | O sistema vai rodar na infra do cliente **sem acesso do time do NTec** para publicar e corrigir? (`infra_cliente_sem_acesso`) | Transcrições | 📝 Não rejeita. O projeto **perde a garantia** de 30 dias e o contrato precisa dizer isso |
-| **Ninguém do cliente** foi nomeado para testar e aprovar as entregas? | Transcrições | 🚩 Parar e consultar |
+| **Ninguém do cliente** foi nomeado para testar e aprovar as entregas? Ninguém falou disso nas reuniões conta como sim | Transcrições | 🚩 Parar e consultar. Não soma semanas: só segura a proposta até o CN trazer o nome |
 
 O campo `multa_por_atraso` não existe mais: se aparecer no JSON, o script pede para tirar.
 
@@ -68,7 +67,7 @@ Estes casos estavam espalhados em F2 e F3. Agora são conferidos aqui, antes de 
 |---|---|---|
 | Algum tenant tem **código ou regra de negócio diferente** dos outros? (ver *Instâncias* no glossário) | Transcrições ("cada unidade tem a sua regra…") | 🚩 **Parada obrigatória** (✅ Reunião 22/10): o NTec não suporta essa arquitetura. A skill dimensiona, mas não se vende sem a área de projetos |
 | Alguma integração é com sistema que, segundo as transcrições, **não tem API**? (unidirecional **ou** bidirecional) | Transcrições ("integrar com…", "puxar do sistema…"); botões do protótipo só com fala que os confirme | 🚩 Parar e consultar. Alternativa a sugerir: importação/exportação de planilha |
-| Alguma feature não tem **nenhuma** referência citada **e** não tem documentação técnica pública? | Transcrições ("tipo o…", "igual ao…"); protótipo | 🚩 Parar e consultar. Pode exigir prova de conceito paga antes da proposta |
+| Alguma feature, **pedida nas reuniões**, não tem **nenhuma** referência **e** não tem documentação técnica pública? | Transcrições ("ninguém faz isso", "nunca vi") **e** confirmação do CN no chat. A skill **não** julga sozinha se existe documentação pública (seria palpite): sem as duas, é só pergunta em `a_confirmar` (`F3-desenvolvimento.md`, Passo 3) | 🚩 Parar e consultar. Pode exigir prova de conceito paga antes da proposta |
 | O produto depende de **hardware** (Bluetooth com dispositivo próprio, IoT, leitor, impressora fiscal)? | Transcrições; protótipo | 🚩 Parar e consultar (🔎 Proposta) |
 
 ## 0.5 Demanda pouco detalhada
