@@ -22,6 +22,12 @@ Revisão de 22/10/2026 (dimensionamento do Projeto G, primeiro projeto com PRD d
 níveis): fator de formato por fluxo (`fluxos_por_formato`): cada fluxo recebe o
 fator do código em que existe, e o formato extra só pesa nos fluxos que existem
 em mais de um código. Publicação nas lojas pode ser lacuna do Fathom ("+").
+
+Revisão de 22/10/2026 (reunião "Validação Entregas Tec"): a entrada padrão passa a
+ser as transcrições das reuniões de diagnóstico + o protótipo navegável (a PRD vem
+depois do contrato). F0: multa por atraso sai (não existe nos contratos do NTec);
+SLA/suporte 24/7 e infra do cliente sem acesso deixam de rejeitar e viram avisos de
+contrato; multitenancy com regra por tenant é parada obrigatória.
 """
 
 import json
@@ -94,16 +100,22 @@ PROVAVEL_CALIBRADO_ATE = 26  # acima disso a régua ainda não foi calibrada
 F0_REJEICOES = {
     "stack_exigida_fora_da_lista": "O cliente exige uma tecnologia fora da lista aceita pelo NTec.",
     "offline_sync_com_mongodb_exigido": "Offline com sincronização exigido em MongoDB: só se vende com Postgres.",
-    "sla_ou_sustentacao": "O cliente exige SLA, suporte 24/7 ou sustentação além da garantia de 30 dias.",
-    "infra_cliente_sem_acesso": "O sistema roda na infra do cliente sem acesso do time do NTec para publicar e corrigir.",
+}
+# F0 — Ajustam o contrato, não rejeitam nem param (reunião de 22/10/2026). Viram alerta.
+F0_CONTRATO = {
+    "sla_ou_sustentacao": "Suporte 24/7, SLA ou sustentação além da garantia de 30 dias: fica fora deste prazo e "
+                          "vai para um contrato de manutenção à parte.",
+    "infra_cliente_sem_acesso": "Roda na infra do cliente sem acesso do time do NTec: o projeto perde a garantia "
+                                "de 30 dias e o contrato precisa dizer isso.",
 }
 # F0 — Parar e consultar a área de projetos: a skill dimensiona, mas o status é 🚩.
 F0_PARADAS = {
-    "multa_por_atraso": "O contrato prevê multa por atraso.",
     "sem_validador_nomeado": "Ninguém do cliente foi nomeado para testar e aprovar as entregas.",
     "feature_sem_referencia_nem_doc": "Feature sem referência e sem documentação técnica pública: pode exigir prova de conceito paga.",
     "hardware": "O produto depende de hardware (Bluetooth com dispositivo próprio, IoT, leitor, impressora fiscal).",
 }
+
+F0_REMOVIDOS = {"multa_por_atraso": "critério removido em 22/10/2026 (o NTec não tem multa por atraso)"}
 
 # Campos obrigatórios e valores aceitos. Nenhum tem padrão.
 OPCOES = {
@@ -127,9 +139,10 @@ REMOVIDOS = {
     "cliente_pouca_disponibilidade": "fator removido em 20/10/2026 (quem valida vai para o F0)",
 }
 
-# Fatores que a PRD não responde e a skill procura no Fathom (leitura-prd.md, Passo 4).
+# Fatores que nem as transcrições nem o protótipo responderam (leitura-transcricoes-prototipo.md).
+# O nome `lacunas_fathom` ficou por compatibilidade: Fathom = as transcrições das reuniões.
 # Lacuna entra na conta com o valor mais pesado; a parte da venda que depende dela aparece
-# com "+" ("vender 14 semanas = 12 + 2 que dependem do Fathom").
+# com "+" ("vender 14 semanas = 12 + 2 que dependem de confirmar com o cliente").
 LACUNAS_FATHOM = {
     "atipico": "referência de produto",
     "stack_fora_template": "tecnologia exigida",
@@ -151,9 +164,12 @@ def validar_f0(e):
     if not isinstance(f0, dict):
         erros.append("f0: ausente (bloco de viabilidade, ver fatores/F0-viabilidade.md)")
     else:
-        for campo in [*F0_REJEICOES, *F0_PARADAS]:
+        for campo in [*F0_REJEICOES, *F0_CONTRATO, *F0_PARADAS]:
             if not isinstance(f0.get(campo), bool):
                 erros.append(f"f0.{campo}: ausente ou não é true/false")
+        for campo, motivo in F0_REMOVIDOS.items():
+            if campo in f0:
+                erros.append(f"f0.{campo}: tirar do JSON ({motivo})")
         prazo = f0.get("prazo_exigido_semanas", "ausente")
         if prazo is not None and (isinstance(prazo, bool) or not isinstance(prazo, (int, float))):
             erros.append("f0.prazo_exigido_semanas: ausente (usar null se o cliente não exigiu prazo)")
@@ -264,13 +280,14 @@ def calcular(e):
         return {"rejeicoes": rejeicoes, "paradas": paradas, "alertas": [], "avisos_internos": []}
 
     validar(e)
-    alertas = []
-    # Avisos para quem mantém a régua (decisões em aberto). Saem no terminal, não no PDF.
+    alertas = [msg for campo, msg in F0_CONTRATO.items() if f0[campo]]
+    # Avisos para quem mantém a régua (decisões em aberto). Saem no terminal, não na proposta.
     avisos_internos = []
     if e["multitenancy"] == "instancias":
-        paradas.append("Multitenancy com código ou regra de negócio diferente por cliente: projeto beira o inviável.")
+        paradas.append("Multitenancy com código ou regra de negócio diferente por cliente: parada obrigatória, "
+                       "o NTec não suporta essa arquitetura. Não vender sem a área de projetos.")
     if "sem_api" in e["integracoes"]:
-        paradas.append("Integração com sistema que a PRD diz não ter API: avaliar alternativa (planilha); "
+        paradas.append("Integração com sistema que, segundo as transcrições, não tem API: avaliar alternativa (planilha); "
                        "potencial motivo de inviabilidade.")
 
     # F1 — Imersão, refinamento, setup e acessos
@@ -390,7 +407,7 @@ def calcular(e):
         paradas.append(f"O cliente exige {fmt(prazo)} semanas, abaixo do otimista ({fmt(otimista)}): "
                        "não vender sem a área de projetos.")
 
-    # Parte da venda que depende das lacunas do Fathom (em sprints inteiras)
+    # Parte da venda que depende das lacunas (o que as transcrições e o protótipo não responderam) (em sprints inteiras)
     lacunas = [k for k in e.get("lacunas_fathom", []) if k in LACUNAS_FATHOM and e[k] != LACUNAS_LEVE[k]]
     venda_confirmada = None
     if lacunas:
@@ -427,13 +444,12 @@ def venda(provavel):
 
 
 def parte_lacunas(e, r):
-    """Complemento da venda com as lacunas do Fathom ("= 12 + 2 que dependem do Fathom (...)"), ou ""."""
+    """Complemento da venda com as lacunas ("= 12 + 2 que dependem de confirmar com o cliente (...)"), ou ""."""
     v, vc = venda(r["provavel"]), r.get("venda_confirmada")
     if vc is None or vc >= v:
         return ""
-    quem = "de confirmar com o cliente" if e.get("fathom") else "do Fathom"
     nomes = ", ".join(LACUNAS_FATHOM[k] for k in r["lacunas_na_conta"])
-    return f"= {vc} + {v - vc} que dependem {quem} ({nomes})"
+    return f"= {vc} + {v - vc} que dependem de confirmar com o cliente ({nomes})"
 
 
 def fmt(v):
@@ -478,7 +494,7 @@ def imprimir(e, r):
         for a in r["alertas"]:
             print(f"  - {a}")
     if r["avisos_internos"]:
-        print("\nAvisos da revisão da régua (não vão para o PDF):")
+        print("\nAvisos da revisão da régua (não vão para a proposta):")
         for a in r["avisos_internos"]:
             print(f"  - {a}")
 

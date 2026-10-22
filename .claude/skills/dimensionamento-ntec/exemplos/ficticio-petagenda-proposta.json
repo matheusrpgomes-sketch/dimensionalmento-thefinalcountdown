@@ -5,9 +5,12 @@
     "cliente_projeto": "PetAgenda · Agenda e carteirinha de vacina para rede de clínicas veterinárias",
     "responsavel_comercial": "",
     "data_envio": "",
-    "prd_link": "[Requisitos] PetAgenda.pdf",
-    "prd_paginas": 6,
-    "prototipo_link": "link do protótipo validado com o cliente"
+    "transcricoes": [
+      "Diagnóstico 1 — 03/03 (Fathom)",
+      "Diagnóstico 2, apresentação do protótipo — 10/03 (Fathom)"
+    ],
+    "prototipo_link": "link do protótipo validado com o cliente",
+    "prd_link": ""
   },
   "problema": {
     "dor": "A rede de 3 clínicas agenda consultas por telefone e controla vacinas em fichas de papel.",
@@ -127,7 +130,7 @@
     ],
     [
       "Histórico e logs",
-      "Não previstos no PRD."
+      "Não citados nas reuniões nem no protótipo."
     ],
     [
       "Dados públicos",
@@ -226,14 +229,14 @@
       ]
     ],
     "nao_validado": [
-      "Toda a stack é premissa a validar na Sprint de Refino e Prototipação (o PRD não fixa tecnologia)."
+      "Toda a stack é premissa a validar na Sprint de Refino e Prototipação (as reuniões não fixaram tecnologia)."
     ]
   },
   "cronograma": {
     "sprints": [
       [
         "Sprint 1",
-        "Imersão, refino do PRD, validação do protótipo e setup. Pedir as contas Apple e Google.",
+        "Imersão, refino do escopo, validação do protótipo e setup. Pedir as contas Apple e Google.",
         "ponto 2"
       ],
       [
@@ -282,18 +285,17 @@
   "prototipo": {
     "recebido": true,
     "tabela": [],
-    "declaracao": "O protótipo segue integralmente as regras do PRD."
+    "declaracao": "O protótipo segue integralmente as regras combinadas nas reuniões."
   },
   "dependencia_externa_sem_confirmacao": false,
   "dimensionamento": {
     "entrada": {
-      "projeto": "PetAgenda, a partir da PRD (exemplo fictício)",
+      "projeto": "PetAgenda, a partir das transcrições e do protótipo (exemplo fictício)",
       "f0": {
         "stack_exigida_fora_da_lista": false,
         "offline_sync_com_mongodb_exigido": false,
         "sla_ou_sustentacao": false,
         "infra_cliente_sem_acesso": false,
-        "multa_por_atraso": false,
         "sem_validador_nomeado": false,
         "feature_sem_referencia_nem_doc": false,
         "hardware": false,
@@ -341,12 +343,12 @@
       "lojas": "normal"
     },
     "criterios": {
-      "F1": "Base. Tem PRD; referência citada no Fathom (não atípico).",
-      "F2": "PRD 2.1: 4 perfis, Recepção e Veterinário com módulos próprios = grandes diferenças; dados separados por clínica. Com fator Claude Code (x0,85 no central).",
+      "F1": "Base. Duas transcrições + protótipo; referência citada na T1 (não atípico).",
+      "F2": "Protótipo (menu por perfil) + T1: 4 perfis, Recepção e Veterinário com módulos próprios = grandes diferenças; dados separados por clínica.",
       "F3": "3 fluxos comuns (2.2, 2.4, 2.5) + 1 com RN específica (2.3, rotina agendada) × 1,3; Mercado Pago bi_doc; push uni_doc. Núcleo com fator Claude Code (x0,75 no central).",
       "F4": "Base; cliente com validação semanal (Fathom · 12/03).",
       "F5": "Painel web + app.",
-      "F6": "App comum nas lojas (PRD 2.6)."
+      "F6": "App comum nas lojas (T2 — \"tem que estar na App Store\")."
     },
     "atencao": [
       "A regra \"rotina agendada vira RN específica\" ainda não foi calibrada; como fluxo comum, o provável cairia para 17,5 semanas."

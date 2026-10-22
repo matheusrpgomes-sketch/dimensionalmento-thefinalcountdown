@@ -1,8 +1,8 @@
 # Insumos e perguntas — como tirar os fatores do CN
 
-**A entrada padrão é a PRD** (documento de requisitos gerado pela skill `documento-requisitos-ntec`). Se o CN mandou a PRD, siga `leitura-prd.md`; deste arquivo, use só o vocabulário do Passo 3 quando precisar.
+**A entrada padrão são as transcrições das reuniões de diagnóstico + o protótipo navegável** (`leitura-transcricoes-prototipo.md`). Deste arquivo, o caminho padrão usa a **tabela de perguntas do Passo 2** (para as lacunas) e o **vocabulário do Passo 3** (para traduzir a fala do cliente).
 
-Este arquivo é o caminho **sem PRD**: o formulário **Dimensionamento Tec** (inteiro ou em parte), uma ficha de qualificação, um briefing solto ou a transcrição de uma call. Ele diz o que extrair de cada uma, o que perguntar quando faltar e como traduzir a fala do cliente para os fatores da régua. Toda resposta feita por este caminho sai como ⚠️ **Estimativa preliminar, sem PRD**, com a recomendação de rodar a skill da PRD antes de fechar a proposta.
+O caminho completo deste arquivo vale quando **não há transcrição**: o formulário **Dimensionamento Tec** (inteiro ou em parte), uma ficha de qualificação ou um briefing solto. Toda resposta feita assim sai como ⚠️ **Estimativa preliminar: faltam as transcrições**, com a recomendação de mandar as transcrições e o protótipo antes de fechar a proposta.
 
 ---
 
@@ -10,7 +10,8 @@ Este arquivo é o caminho **sem PRD**: o formulário **Dimensionamento Tec** (in
 
 | Entrada | O que aproveitar | Cuidado |
 |---|---|---|
-| **PRD ("[Requisitos] {projeto}")** | Tudo | Não é este arquivo: ir para `leitura-prd.md` |
+| **Transcrições + protótipo** | Tudo | Não é este arquivo: ir para `leitura-transcricoes-prototipo.md` |
+| **PRD ("[Requisitos] {projeto}")** | Conferência | Revalidação depois do contrato: `leitura-prd.md` |
 | Formulário Dimensionamento Tec | Seções 1 (perfis de usuário), 3 (fluxos críticos, features atípicas), 5 (porte e maturidade do cliente) e 6 (perfil da demanda: formato, níveis, multitenancy, integrações, dados, offline) | Seções 7 e 8 (baseline e buffer) preenchidas pelo CN são **palpite**: não usar como entrada, só comparar no fim |
 | Ficha de qualificação ou proposta | Produto, setor, porte, o que o cliente pediu | Costuma **subestimar o escopo** (Projeto B: o escopo real ficou maior que o da ficha) |
 | Transcrição de call (Fathom, Granola, notas) | Fluxos descritos pelo cliente, integrações citadas, urgência, quem aprova | Filtrar a conversa: só o que mexe em prazo. Desejo vago ("seria legal ter…") não é escopo até o CN confirmar |
@@ -22,7 +23,7 @@ Este arquivo é o caminho **sem PRD**: o formulário **Dimensionamento Tec** (in
 
 **Critérios completos e pesos:** no arquivo de cada fase em `fatores/`. A tabela abaixo é o atalho das perguntas para o CN. **O JSON exige todos os campos**, inclusive o bloco `"f0"` (formato em `exemplos/*.json`): o que ninguém respondeu entra com o valor mais pesado e vai para *Suposições*.
 
-**Primeiro o F0** (`fatores/F0-viabilidade.md`): se o cliente exige tecnologia fora da lista aceita, offline com sincronização em MongoDB, SLA ou sustentação, ou infra sem acesso do NTec, o projeto é rejeitado e não há o que perguntar do resto.
+**Primeiro o F0** (`fatores/F0-viabilidade.md`): se o cliente exige tecnologia fora da lista aceita ou offline com sincronização em MongoDB, o projeto é rejeitado e não há o que perguntar do resto.
 
 Perguntar **no máximo 5 por rodada**, primeiro as que mais mexem no prazo (na ordem da tabela). Usar as perguntas como estão: foram escritas para o CN repassar ao cliente sem precisar traduzir.
 
@@ -38,10 +39,10 @@ Perguntar **no máximo 5 por rodada**, primeiro as que mais mexem no prazo (na o
 | **Multitenancy** (F2) | "O sistema vai ser usado por várias empresas ou unidades diferentes? Cada uma precisa de regras e funções próprias, ou só não pode ver os dados da outra?" | Uma empresa só = não. Regra ou função própria por empresa = `instancias` (🚩 F0). Vazamento quebra contrato ou LGPD = isolado. Admin geral vê tudo = separado. Sem resposta = isolado |
 | **Volume** (F3) | "Quantas pessoas devem usar ao mesmo tempo, no pior dia?" | Centenas = normal. Milhares simultâneos ou picos (evento, lançamento) = volume alto |
 | **Quem valida** (F0) | "Quem do cliente vai testar e aprovar as entregas?" | Ninguém nomeado, ou "depende" = `sem_validador_nomeado: true` (🚩) |
-| **Condições de contrato** (F0) | "O contrato vai ter multa por atraso, exigência de suporte 24/7 ou SLA, ou uma data limite de entrega?" | Multa = 🚩. SLA ou sustentação = 🚫. Data limite = `prazo_exigido_semanas` (abaixo do otimista = 🚩) |
+| **Condições de contrato** (F0) | "O cliente espera suporte 24/7 ou SLA depois da entrega, ou tem uma data limite?" | SLA ou suporte 24/7 = `sla_ou_sustentacao: true` (contrato de manutenção à parte, não rejeita). Data limite = `prazo_exigido_semanas` (abaixo do otimista = 🚩) |
 | **Hardware** (F0) | "O sistema precisa conversar com algum aparelho (leitor, impressora fiscal, sensor, Bluetooth)?" | Sim = `hardware: true` (🚩) |
-| **Stack e deploy** (F0, F1, F5) | "O cliente exige alguma tecnologia ou que o sistema fique nos servidores dele? Se ficar nos servidores dele, o nosso time vai ter acesso para publicar e corrigir?" | Tecnologia fora da lista do F0 = 🚫. Dentro da lista mas fora do template (ex.: Supabase) = `stack_fora_template`. Servidores do cliente com acesso = `deploy_infra_cliente`; sem acesso = 🚫 |
-| **Documentação da demanda** (F1) | "Já existe documento de requisitos, protótipo ou referência de app parecido?" | Nada disso → demanda pouco detalhada |
+| **Stack e deploy** (F0, F1, F5) | "O cliente exige alguma tecnologia ou que o sistema fique nos servidores dele? Se ficar nos servidores dele, o nosso time vai ter acesso para publicar e corrigir?" | Tecnologia fora da lista do F0 = 🚫. Dentro da lista mas fora do template (ex.: Supabase) = `stack_fora_template`. Servidores do cliente com acesso = `deploy_infra_cliente`; sem acesso = `infra_cliente_sem_acesso: true` (sem garantia, ajustar contrato) |
+| **Documentação da demanda** (F1) | "Já existe protótipo navegável ou referência de app parecido?" | Sem protótipo → demanda pouco detalhada |
 | **Atípico** (F1, F3) | "Existe algum app ou site parecido que a gente possa usar de referência?" | Nenhum benchmark → atípico. Não marcar só porque o *setor* é incomum se o produto é comum |
 
 ## Passo 3 — Vocabulário: o que o cliente diz × o que a régua entende

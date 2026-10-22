@@ -1,6 +1,8 @@
 # Leitura da PRD — do documento de requisitos para os fatores da régua
 
-A **PRD** (Documento de Requisitos de produto do NTec) é a entrada padrão desta skill. Ela é gerada pela skill `documento-requisitos-ntec` ([repositório](https://github.com/rivasaugustus/documento-requisitos-ntec)) a partir das reuniões com o cliente e vira anexo de contrato. Esta skill roda **depois** dela.
+> **Desde 22/10/2026 a PRD não é mais a entrada padrão.** A skill dimensiona a partir das transcrições das reuniões de diagnóstico + o protótipo navegável (`leitura-transcricoes-prototipo.md`). A PRD vem **por último**, depois da assinatura do contrato, e este arquivo serve para **revalidar** o dimensionamento quando ela existir. Regras que continuam valendo daqui no caminho padrão: a tabela do Passo 3 (fatores de complexidade → linhas da régua) e o "não contar duas vezes". **Nunca contar módulos da PRD:** a quantidade de módulos depende de quem escreveu, não do trabalho. Contar jornadas.
+
+A **PRD** (Documento de Requisitos de produto do NTec) é gerada pela skill `documento-requisitos-ntec` ([repositório](https://github.com/rivasaugustus/documento-requisitos-ntec)) a partir das reuniões com o cliente e vira anexo de contrato.
 
 Este arquivo diz onde, na PRD, está cada campo do JSON do `scripts/calcular_faixa.py`. O critério completo de cada fator (pergunta, onde ler, o que fazer sem resposta) está no arquivo da fase em `fatores/`; se este arquivo e `fatores/` divergirem, vale `fatores/`. **Todo campo é obrigatório:** o script não tem valor padrão e para se faltar algum.
 
@@ -16,7 +18,7 @@ Este arquivo diz onde, na PRD, está cada campo do JSON do `scripts/calcular_fai
 | Blocos "Perfis de acesso", "Funcionalidades" e "Integrações" | Chat da skill da PRD | Conferência. As fontes (`[Fathom · AT 12/03]`, `[chat]`…) mostram de onde veio cada item |
 | **Transcrições do Fathom** (ou resumo do Fathom/Granola) das reuniões com o cliente | As mesmas reuniões que geraram a PRD | Responder o Passo 4 sem perguntar ao CN. O que não estiver nelas vira **lacuna** |
 
-**Sem PRD** (só o formulário Dimensionamento Tec, uma transcrição ou um briefing): dimensionar mesmo assim pelo caminho de `insumos-e-perguntas.md`, mas o status nunca é ✅. Marcar ⚠️ **Estimativa preliminar, sem PRD** e dizer ao CN para rodar a skill da PRD antes de fechar a proposta.
+**Sem PRD:** é o caminho padrão (`leitura-transcricoes-prototipo.md`). Não marcar nada como preliminar por falta de PRD.
 
 **PDF e inventário divergem** (ex.: o inventário tem um módulo que o PDF não tem): vale o PDF, que é o anexo de contrato. Registrar a divergência em *Pontos de atenção*.
 
@@ -28,9 +30,8 @@ Este arquivo diz onde, na PRD, está cada campo do JSON do `scripts/calcular_fai
 |---|---|---|
 | `stack_exigida_fora_da_lista` | 3.1; Fathom ("tem que ser em…") | `true` só se o cliente **exige** tecnologia fora da lista aceita do F0. "Vocês decidem" → `false`. 🚫 rejeita |
 | `offline_sync_com_mongodb_exigido` | Termo "offline"; 3.1; Fathom | `true` se grava sem internet para subir depois **e** o cliente exige MongoDB. 🚫 rejeita |
-| `sla_ou_sustentacao` | Seção 3; Fathom | Suporte 24/7, SLA ou sustentação além da garantia de 30 dias → `true`. 🚫 rejeita |
-| `infra_cliente_sem_acesso` | 3.1; Fathom | Roda na infra do cliente sem acesso do time do NTec para publicar e corrigir → `true`. 🚫 rejeita |
-| `multa_por_atraso` | Fathom; minuta | `true` se o contrato prevê multa por atraso. 🚩 |
+| `sla_ou_sustentacao` | Seção 3; Fathom | Suporte 24/7, SLA ou sustentação além da garantia de 30 dias → `true`. Não rejeita: alerta de contrato de manutenção à parte (22/10/2026) |
+| `infra_cliente_sem_acesso` | 3.1; Fathom | Roda na infra do cliente sem acesso do time do NTec para publicar e corrigir → `true`. Não rejeita: sem garantia, ajustar o contrato (22/10/2026) |
 | `sem_validador_nomeado` | Fathom | `true` se ninguém do cliente foi nomeado para testar e aprovar. Sem Fathom, `true` + lacuna. 🚩 |
 | `feature_sem_referencia_nem_doc` | Fatores de complexidade; Fathom | `true` se alguma feature não tem referência citada **nem** documentação técnica pública. 🚩 |
 | `hardware` | PRD; Fathom | Bluetooth com dispositivo próprio, IoT, leitor, impressora fiscal → `true`. 🚩 |

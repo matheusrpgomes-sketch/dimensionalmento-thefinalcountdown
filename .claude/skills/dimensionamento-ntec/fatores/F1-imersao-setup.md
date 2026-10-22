@@ -21,11 +21,22 @@ Sempre entra. Cobre imersão, Sprint de Refino, setup do monorepo e pedido de ac
 
 ✅ **Reunião 20/10:** quando a demanda estiver pouco detalhada, a skill emite um **alerta para o CN recomendando discovery** antes de seguir.
 
-Antes, com PRD, este fator era sempre `false` e o alerta nunca disparava. Agora é `true` se **qualquer** pergunta abaixo for sim:
+É `true` se **qualquer** pergunta abaixo for sim. Desde 22/10/2026 a entrada padrão é transcrições + protótipo (`leitura-transcricoes-prototipo.md`), e a falta de PRD **não** conta mais: a PRD vem depois do contrato.
+
+**Com transcrições + protótipo (caminho padrão):**
 
 | Pergunta | Onde ler | Sem resposta |
 |---|---|---|
-| Não há PRD gerada pela skill `documento-requisitos-ntec`? | Entrada da skill | — |
+| Não veio protótipo navegável (ou a skill não conseguiu abrir e o CN não mandou prints)? | Entrada da skill | — |
+| Alguma jornada pedida na transcrição não tem como saber quem faz e o que sai no fim (sem tela no protótipo e com fala vaga)? | Transcrições × protótipo | Sim |
+| Alguma integração citada não tem como saber o sentido (só puxa, só manda, ou os dois)? | Transcrições | Sim |
+| O cliente citou uma regra de cálculo, fórmula ou regra legal, mas ninguém disse como ela funciona nem onde está escrita? | Transcrições | Sim |
+| Mais de 3 jornadas do protótipo ficaram *A confirmar* (ninguém falou delas)? | Passo 3 de `leitura-transcricoes-prototipo.md` | Sim |
+
+**Com PRD (revalidação depois do contrato):**
+
+| Pergunta | Onde ler | Sem resposta |
+|---|---|---|
 | Algum módulo da PRD não tem a linha **Superfície**, nem no próprio módulo nem no título da seção-mãe (ex.: "2.2 Fluxo do Consultor (Aplicativo Mobile)" vale para 2.2.1 a 2.2.5)? | Seção 2 | Sim |
 | Alguma integração da PRD não tem **Sentido**, **Dados** ou **Meio**? | Itens SID | Sim |
 | Algum fluxo de dados não tem **Origem**, **Processamento** ou **Destino**? | Seção 2 | Sim |
