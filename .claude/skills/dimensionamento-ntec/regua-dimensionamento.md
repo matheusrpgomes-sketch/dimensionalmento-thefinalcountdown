@@ -10,7 +10,7 @@ Regras gerais para transformar o que o coordenador de negócios (CN) levantou em
 
 ## Regras de uso (ler antes de dimensionar)
 
-1. **Não inventar fator.** Cada fator tem uma pergunta de sim ou não e o lugar onde ler a resposta (`fatores/`). A linha mais leve só entra com a citação da PRD ou do Fathom que a justifica. Sem citação, vale a linha **mais pesada**, registrada em *Suposições* e, se for o caso, como lacuna para o CN. Uma empresa júnior erra muito mais para menos do que para mais.
+1. **Não inventar fator.** Cada fator tem uma pergunta de sim ou não e o lugar onde ler a resposta (`fatores/`). Só entra na venda o que tem citação da transcrição (ou da tela do protótipo, confirmada por fala). **Sem citação** (revisão de 22/10/2026): o campo fica no valor do silêncio (`leitura-transcricoes-prototipo.md`, Passo 4) e a dúvida vai para `a_confirmar`, que o script calcula **fora** da venda ("vender 14 + até 4"), com status ⚠️ até o CN responder. Assim a dúvida não vira gordura (erro do CTE) e também não vira desconto escondido (erro do Projeto C, vendido para menos). A linha mais pesada só decide o empate de um fator **citado** que encaixa em duas linhas (`regra-fronteira-e-faixa.md`).
 2. **Toda linha tem três valores: mínimo / central / máximo.** O mínimo é o cenário "tudo dá certo", o central é o que costuma acontecer no NTec e o máximo é "os riscos aparecem".
 3. **F0 primeiro, depois somar fase a fase, na ordem F1 a F6.** O F0 não soma semanas: rejeita o projeto ou para para a área de projetos. As fases são sequenciais na régua, mesmo quando na prática se sobrepõem um pouco. A sobreposição é a folga natural do time.
 4. **Rodar o script para fechar a conta.** Não somar de cabeça.
@@ -37,11 +37,11 @@ Um painel admin dentro do mesmo app web **não** é um formato a mais. Um app na
 
 ## F0 a F6 — os fatores
 
-Desde a revisão de 20/10/2026, cada fase tem o seu arquivo em `fatores/`, com a pergunta de sim ou não, onde ler na PRD ou no Fathom, o que fazer sem resposta e a tabela de pesos. **Os pesos estão lá, não aqui.**
+Desde a revisão de 20/10/2026, cada fase tem o seu arquivo em `fatores/`, com a pergunta de sim ou não, onde ler (nas transcrições e no protótipo; seções da PRD só na revalidação), o que fazer sem resposta e a tabela de pesos. **Os pesos estão lá, não aqui.**
 
 | Fase | Arquivo | Campos do JSON |
 |---|---|---|
-| F0 Viabilidade (não soma semanas) | `fatores/F0-viabilidade.md` | bloco `"f0"`: `stack_exigida_fora_da_lista`, `offline_sync_com_mongodb_exigido`, `sla_ou_sustentacao`, `infra_cliente_sem_acesso` (🚫 rejeitam); `multa_por_atraso`, `sem_validador_nomeado`, `feature_sem_referencia_nem_doc`, `hardware` (🚩 param); `prazo_exigido_semanas` (número ou `null`) |
+| F0 Viabilidade (não soma semanas) | `fatores/F0-viabilidade.md` | bloco `"f0"`: `stack_exigida_fora_da_lista`, `offline_sync_com_mongodb_exigido` (🚫 rejeitam); `sla_ou_sustentacao`, `infra_cliente_sem_acesso` (📝 ajustam o contrato); `sem_validador_nomeado`, `feature_sem_referencia_nem_doc`, `hardware` (🚩 param); `prazo_exigido_semanas` (número ou `null`). `multa_por_atraso` saiu em 22/10/2026 |
 | F1 Imersão, refinamento e setup | `fatores/F1-imersao-setup.md` | `demanda_pouco_detalhada`, `stack_fora_template`, `atipico` |
 | F2 Acesso e multitenancy | `fatores/F2-acesso-multitenancy.md` | `niveis_acesso` (`nenhum`, `1`, `2-5-poucas`, `2-5-grandes`, `6+`), `multitenancy` (`nao`, `separado`, `isolado`, `instancias`) |
 | F3 Desenvolvimento | `fatores/F3-desenvolvimento.md` | `fluxos_comuns`, `fluxos_rn_especifica`, `features_atipicas`, `formatos` (`web`, `pwa`, `app`), `fluxos_por_formato` (só com mais de um formato), `dependencia_dados`, `offline` (`nao`, `local`, `sync`), `volume_alto` |
@@ -50,7 +50,7 @@ Desde a revisão de 20/10/2026, cada fase tem o seu arquivo em `fatores/`, com a
 | F5 Deploy | `fatores/F5-deploy.md` | `deploy_infra_cliente` |
 | F6 Publicação nas lojas | `fatores/F6-lojas.md` | `lojas` (`nao`, `normal`, `sensivel`) |
 
-Opcionais: `projeto`, `lacunas_fathom` e `fathom` (ver *Faixa final*). **Nenhum outro campo tem padrão:** campo ausente, valor desconhecido ou campo removido (`claude_code`, `cliente_pouca_disponibilidade`) faz o script parar com a lista do que corrigir.
+Opcionais: `projeto` e `a_confirmar` (ver *Faixa final*). **Nenhum outro campo tem padrão:** campo ausente, valor desconhecido ou campo removido (`claude_code`, `cliente_pouca_disponibilidade`, `lacunas_fathom`) faz o script parar com a lista do que corrigir.
 
 **Decisões em aberto** (`fatores/README.md`): D1 formato extra, D2 pesos que a reunião mandou aumentar, D3 margem de segurança, D4 teto de fase, D5 Postgres por causa do offline. Até a área técnica decidir, o script usa o valor provisório, marcado com o código da decisão nas constantes.
 
@@ -67,15 +67,16 @@ Sem buffer percentual (removido em 17/10/2026: o efeito era desprezível e o ris
 | **Conservador (teto de risco)** | soma dos máximos | O que acontece se os riscos listados se confirmarem |
 
 - **Arredondamento:** semanas sempre para cima. A **recomendação de venda** é o provável arredondado para cima até fechar sprints inteiras (número par de semanas).
-- **Lacunas do Fathom** (`"lacunas_fathom"` no JSON): a venda é a conta com elas no valor mais pesado. O script mostra com "+" quantas semanas dessa venda dependem delas ("14 = 12 + 2 que dependem do Fathom"), também em sprints inteiras (`leitura-prd.md`, Passo 4).
+- **Perguntas em aberto** (`"a_confirmar"` no JSON, desde 22/10/2026): **não entram na venda.** O script calcula, para cada uma, quanto soma no provável e na venda se a resposta for sim, e a venda sai "**14 semanas + até 4** que dependem de 3 perguntas em aberto" (o "até" é com todas sim, em sprints inteiras). Enquanto houver pergunta em aberto, o status é ⚠️. Substitui o antigo `lacunas_fathom`, que punha a lacuna na venda no valor mais pesado.
 - **Depois somar as semanas off** do calendário.
 
 ---
 
 ## Parar e sinalizar (a skill não decide sozinha)
 
-- 🚫 Critério de rejeição do F0 (stack exigida fora da lista, offline com sincronização em MongoDB exigido, SLA ou sustentação, infra do cliente sem acesso do NTec) → não dimensionar (`fatores/F0-viabilidade.md`).
-- 🚩 Critério de parada do F0: multa por atraso, ninguém do cliente nomeado para validar, feature sem referência **e** sem documentação, hardware, multitenancy com regra diferente por tenant (`instancias`), integração com sistema sem API (`sem_api`), prazo exigido abaixo do otimista.
+- 🚫 Critério de rejeição do F0 (stack exigida fora da lista, offline com sincronização em MongoDB exigido) → não dimensionar (`fatores/F0-viabilidade.md`).
+- 🚩 Critério de parada do F0: ninguém do cliente nomeado para validar, feature sem referência **e** sem documentação, hardware, multitenancy com regra diferente por tenant (`instancias`, parada obrigatória), integração com sistema sem API (`sem_api`), prazo exigido abaixo do otimista.
+- 📝 Ajuste de contrato no F0: suporte 24/7 ou SLA (contrato de manutenção à parte), infra do cliente sem acesso (sem garantia).
 - ⚠️ Demanda pouco detalhada → recomendar discovery antes da proposta (`fatores/F1-imersao-setup.md`, 1.2).
 - ⚠️ Dependência de dados → chamar o núcleo de Dados para avaliar se precisa de engenharia de dados.
 - ⚠️ Provável acima de **26 semanas** → fora da faixa calibrada (ver Calibração). Validar com a área de projetos e considerar quebrar em fases ou contratos.
@@ -130,3 +131,5 @@ Leituras:
 | 17/10/2026 | Revisão da área de projetos: app + painel de 8 fluxos com offline deve levar ~12 sprints | Fator Claude Code revisto para o meio-termo: núcleo do F3 x0,6 / 0,75 / 0,9 e F2 x0,7 / 0,85 / 1 (o x0,5 inicial dava 20 semanas para esse projeto). Projeto B continua em vender 12 |
 | 20/10/2026 | Reunião "Validação Skill NTec" e análise do LLM Council (21/10/2026) | F0 de viabilidade antes de tudo; um arquivo por fator em `fatores/` (pesos saem deste arquivo); nenhum campo do JSON com padrão; tetos não cortam a soma; fator Claude Code e "cliente com pouca disponibilidade" removidos; F2 em 2 a 5 / 6+; formato extra +0,2; `bi_sem_doc` com mínimo 4. Decisões D1 a D5 com valores provisórios. Calibração: B 10 / 13 / 20 (vender 14), C 13 / 18 / 24 |
 | 22/10/2026 | Dimensionamento do Projeto G (app de campo offline + painel web; primeira PRD em três níveis): a skill deu 17 sprints e a área esperava ~14 | Diagnóstico: o erro estava na tradução da PRD, não nos pesos (baixar o peso do fluxo para 0,9 levaria A de 12 para 10 e D de 18 para 16). Mudanças: (1) fluxo = jornada, independente da numeração da PRD (glossário); (2) fator de formato por fluxo (`fluxos_por_formato`), com o formato extra só nos fluxos `compartilhado`; (3) relatório em template fixo não é RN específica; (4) upload simples do usuário não é dependência de dados; (5) Superfície vale pelo título da seção-mãe; (6) `lojas` pode ser lacuna do Fathom ("+"). Projeto G: vender 34 → 28 semanas (14 sprints = 24 + 4 que dependem de referência de produto e lojas). Pesos inalterados; A a D com os mesmos números (C e D com todos os fluxos `compartilhado`, a conferir) |
+| 22/10/2026 | Reunião "Validação Entregas Tec" (Projeto CTE: a skill deu 17 sprints, esperado 13 a 14; diferença vinda de ambiguidades da PRD tratadas como margem e da precificação de testes e gestão da mudança) | (1) Entrada padrão = transcrições das reuniões de diagnóstico + protótipo navegável; a PRD vem depois do contrato (`leitura-transcricoes-prototipo.md`); (2) ambiguidade de escopo vira pergunta com custo, não semana; (3) regra zero contra alucinação (toda informação com citação); (4) F0: multa por atraso sai; SLA/24-7 e infra sem acesso viram ajuste de contrato; multitenancy por tenant é parada obrigatória; (5) proposta em Markdown no lugar do PDF; (6) redução do ETIP nas fases finais fica na precificação, fora da skill. Pesos inalterados; A a D com os mesmos números |
+| 22/10/2026 | Decisões do Matheus sobre a reunião "Validação Entregas Tec" (revisão do fluxo transcrições + protótipo) | (1) Jornada com regra fechada: perfil + objetivo + entidade principal; cadastro auxiliar não conta; 3+ entidades principais ou 6+ telas próprias contam 2 (limites a calibrar no CTE); (2) tela que só passou na demo, sem fala do cliente, não conta; (3) nenhuma dúvida entra na venda: valor do silêncio (tabela única no Passo 4 de `leitura-transcricoes-prototipo.md`) + `a_confirmar`, calculado pelo script fora da venda ("+ até X"), status ⚠️ até a resposta; `lacunas_fathom` removido; (4) só o resumo da reunião → ⚠️ preliminar; (5) glossário e F1 a F6 escritos para transcrição + protótipo; F5 corrigido (infra sem acesso não rejeita); F0: feature sem referência só com confirmação do CN, prazo exigido contado da data de início. Pesos inalterados; A a D com os mesmos números |

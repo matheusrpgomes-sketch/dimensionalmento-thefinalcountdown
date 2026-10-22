@@ -7,7 +7,7 @@
 | 4.1 Base | 1 | 1,5 | 2 |
 | 4.2 RN crítica ⏳ **D2** | +0,5 | +0,5 | +1 |
 
-✅ **Reunião 20/10:** o fator "cliente com pouca disponibilidade para validar" foi **removido**. Também sai das `LACUNAS_FATHOM` do script, do Passo 4 de `leitura-prd.md` e de `insumos-e-perguntas.md`. Quem do cliente testa e aprova passa a ser conferido no **F0** (item 0.3: ninguém nomeado → parar e consultar).
+✅ **Reunião 20/10:** o fator "cliente com pouca disponibilidade para validar" foi **removido**. Também saiu do script, de `leitura-prd.md` e de `insumos-e-perguntas.md`. Quem do cliente testa e aprova passa a ser conferido no **F0** (item 0.3: ninguém nomeado → parar e consultar).
 
 ✅ **Reunião 20/10:** a prática de **deploys parciais desde o início** (o cliente usa versões embrionárias nas revisões, na Vercel) está validada. Ela não muda o peso; é a premissa que torna a base do F4 possível.
 
@@ -23,7 +23,7 @@ Sempre entra.
 
 | Pergunta | Onde ler | Sem resposta |
 |---|---|---|
-| **O código do NTec calcula** valor em dinheiro, dose, dado clínico, prazo legal ou dado fiscal, e um erro causa dano ao usuário final? | RNs dos módulos; 3.4 | `true` se a PRD tem RN de saúde, dinheiro ou legal sem dizer quem calcula |
+| **O código do NTec calcula** valor em dinheiro, dose, dado clínico, prazo legal ou dado fiscal, e um erro causa dano ao usuário final? | Transcrições ("o sistema calcula a mensalidade", "a dose sai da tabela"). Na revalidação: RNs da PRD, 3.4 | `false`. Cálculo citado sem dizer quem calcula (o sistema ou o gateway/outro sistema) → `false` + pergunta em `a_confirmar` com `"troca": {"rn_critica": true}` |
 
 **Não é RN crítica:** só repassar um valor para o gateway de pagamento, que é quem calcula e cobra. **É RN crítica:** o sistema calcula o valor da mensalidade com desconto proporcional, a dose de um medicamento, o prazo de uma multa.
 

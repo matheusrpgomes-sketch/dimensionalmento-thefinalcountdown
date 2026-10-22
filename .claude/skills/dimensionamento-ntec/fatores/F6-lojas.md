@@ -19,8 +19,8 @@ Fazer na ordem. A primeira resposta que decide encerra o teste.
 | # | Pergunta | Onde ler | Resultado |
 |---|---|---|---|
 | 1 | O formato é app nativo? (ver glossário) | F3, item 3.2 | Não → **não publica** |
-| 2 | O app vai para a App Store ou a Play Store abertas ao público? | Módulo *Disponibilização do Produto*; 3.1; Fathom | Não (só uso interno ou teste) → **não publica**. Sem resposta → segue para a 3 (publica) + `"lojas"` em `lacunas_fathom`: a venda mostra com "+" quanto depende disso (`leitura-prd.md`, Passo 4) |
-| 3 | O app é **sensível**? (qualquer item abaixo) | 3.4; RNs; Fathom | Sim → **app sensível**. Não → **app comum** |
+| 2 | O app vai para a App Store ou a Play Store abertas ao público? | Transcrições ("baixar na loja", "estar na Play Store" × "só a nossa equipe usa"). Na revalidação: módulo *Disponibilização do Produto*, 3.1 | Sim → segue para a 3. Não (só uso interno ou teste) → **não publica**. Ninguém falou de loja → **não publica** + pergunta em `a_confirmar`: "O app precisa estar na App Store ou na Play Store?", com `"troca": {"lojas": "normal"}` (ou `"sensivel"`, se a 3 der sim) |
+| 3 | O app é **sensível**? (qualquer item abaixo) | Transcrições + protótipo (dados que aparecem nas telas) | Sim → **app sensível**. Não → **app comum** |
 
 **App sensível** se qualquer um for sim:
 - a categoria na loja é Medical (saúde), Finance (finanças) ou Kids (infantil);
@@ -28,7 +28,7 @@ Fazer na ordem. A primeira resposta que decide encerra o teste.
 - tem pagamento **dentro do app**;
 - o público inclui menores de 13 anos.
 
-**Sem resposta na pergunta 3:** app sensível + lacuna: "O app coleta dado de saúde, recebe pagamento ou é usado por crianças?"
+**Sem resposta na pergunta 3:** app comum + pergunta em `a_confirmar`: "O app coleta dado de saúde, recebe pagamento ou é usado por crianças?", com `"troca": {"lojas": "sensivel"}`.
 
 **Exemplo:** app de academia que só agenda aulas → comum. App de academia que registra peso, medidas e restrições médicas → sensível (dado de saúde).
 

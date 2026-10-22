@@ -2,7 +2,9 @@
 
 Skill do Claude que ajuda coordenadores de negócios (CNs) do Núcleo de Tecnologia a chegar a uma **faixa de semanas** realista (otimista / provável / conservador) antes de mandar a proposta para a área de projetos. A arquitetura segue a skill de dimensionamento do NCiv (Gabrielle Lobo, [repositório](https://github.com/gabriellelobo-pj/skill-dimensionamento)). A régua segue o formulário *Dimensionamento Tec* e foi calibrada nos projetos reais do NTec.
 
-**Entrada padrão: a PRD.** A skill roda logo depois da `documento-requisitos-ntec` ([repositório do Augustus](https://github.com/rivasaugustus/documento-requisitos-ntec)), que gera o documento de requisitos "[Requisitos] {projeto}". Esta skill ocupa o lugar que a skill da PRD chama de `validacao-tecnica-ntec`, mas calcula só o prazo, sem preço. Sem PRD, ela dimensiona mesmo assim, e o resultado sai como ⚠️ estimativa preliminar.
+**Entrada padrão (desde 22/10/2026): as transcrições das reuniões de diagnóstico + o protótipo navegável.** A PRD da `documento-requisitos-ntec` ([repositório do Augustus](https://github.com/rivasaugustus/documento-requisitos-ntec)) **vem por último**, depois da assinatura do contrato, e serve só para revalidar o número. A skill calcula só o prazo, sem preço. A Proposta Técnica sai em **Markdown**.
+
+> **Revisão de 22/10/2026 (reunião "Validação Entregas Tec").** O Projeto CTE deu 17 sprints (esperado 13 a 14) porque ambiguidades da PRD viraram margem e porque a contagem dependia dos módulos que quem escreveu a PRD escolheu. Agora: transcrições + protótipo como entrada (`leitura-transcricoes-prototipo.md`), contagem por jornada, ambiguidade de escopo vira pergunta com custo (não semana), regra zero contra alucinação, F0 revisto (multa por atraso saiu; suporte 24/7 e infra sem acesso viram ajuste de contrato; multitenancy por tenant é parada obrigatória) e proposta em Markdown. Pesos inalterados. As seções históricas abaixo descrevem a fase em que a PRD era a entrada.
 
 > **Retomando em outra conversa?** Leia a seção [Contexto para retomar](#contexto-para-retomar) no fim deste arquivo.
 
@@ -17,14 +19,15 @@ skill-dimensionamento-ntec/
 └── .claude/skills/dimensionamento-ntec/
     ├── SKILL.md                    ← orquestrador: procedimento, guardrails, entregável e resposta no chat
     ├── proposta-tecnica.md         ← como preencher as 14 seções da Proposta Técnica (o entregável)
-    ├── leitura-prd.md              ← entrada padrão: onde está cada fator na PRD + o que perguntar ao CN
-    ├── insumos-e-perguntas.md      ← caminho sem PRD (formulário, ficha, transcrição) + vocabulário
+    ├── leitura-transcricoes-prototipo.md ← entrada padrão: transcrições + protótipo, regra contra alucinação
+    ├── leitura-prd.md              ← revalidação depois do contrato, quando a PRD existir
+    ├── insumos-e-perguntas.md      ← perguntas prontas para o CN, vocabulário, caminho com formulário/briefing
     ├── fatores/                    ← um arquivo por fase (F0 viabilidade a F6 lojas) com critérios e pesos,
     │                                 glossário e README com as decisões em aberto D1 a D5
     ├── regua-dimensionamento.md    ← regras de uso, faixa final, quando parar, calibração, fontes
     ├── regra-fronteira-e-faixa.md  ← desempate entre linhas + tabela de cortes ("O que cortar")
     ├── scripts/calcular_faixa.py   ← faz a conta (fonte da verdade dos pesos)
-    ├── scripts/gerar_proposta.py   ← gera o PDF "[Proposta Técnica] {projeto}" no template do NTec (reportlab)
+    ├── scripts/gerar_proposta.py   ← gera "[Proposta Técnica] {projeto}.md" no template do NTec (sem dependência)
     └── exemplos/                   ← precedentes (.md + .json): Projeto A, Projeto B, Projeto C, Projeto D,
                                       Projetos E e F (pendente), PetAgenda (fictício, resposta completa)
                                       PetAgenda via PRD (fictício, leitura da PRD) e PetAgenda proposta (JSON modelo)
@@ -35,13 +38,13 @@ skill-dimensionamento-ntec/
 ## Como usar
 
 - **Instalada em:** `~\.claude\skills\dimensionamento-ntec\` (pasta pessoal; vale em qualquer projeto do Claude Code).
-- **Chamar:** `/dimensionamento-ntec`, ou pedir "dimensiona esse projeto" mandando o PDF da PRD (e, se tiver, o bloco "Inventário para dimensionamento"). Sem PRD, aceita o formulário, a ficha ou a transcrição, mas a estimativa sai como preliminar.
+- **Chamar:** `/dimensionamento-ntec`, ou pedir "dimensiona esse projeto" mandando as transcrições das reuniões de diagnóstico (texto, .txt/.md/.docx/PDF) e o protótipo (link, código exportado ou prints). Só transcrições: estimativa preliminar. Só protótipo: a skill pede as transcrições.
 - **claude.ai:** compactar a pasta `dimensionamento-ntec` em .zip e enviar em *Settings → Capabilities → Skills*.
 - **Rodar a conta direto:**
   ```bash
   python .claude/skills/dimensionamento-ntec/scripts/calcular_faixa.py .claude/skills/dimensionamento-ntec/exemplos/projeto-a.json
   ```
-- **Gerar a Proposta Técnica** (precisa de `pip install reportlab`):
+- **Gerar a Proposta Técnica** (Markdown, sem dependência extra):
   ```bash
   python .claude/skills/dimensionamento-ntec/scripts/gerar_proposta.py .claude/skills/dimensionamento-ntec/exemplos/ficticio-petagenda-proposta.json --saida .
   ```
@@ -59,6 +62,10 @@ skill-dimensionamento-ntec/
 ## Contexto para retomar
 
 Resumo das conversas que criaram e evoluíram a skill (16 e 17/10/2026), para continuar em outra conversa sem precisar do histórico. **Comece por "Onde paramos".**
+
+### Onde paramos (22/10/2026)
+- **Revisão de 22/10 (decisões do Matheus sobre a reunião "Validação Entregas Tec"):** (1) **jornada com regra fechada**: perfil + objetivo + entidade principal; cadastro auxiliar não conta; 3+ entidades ou 6+ telas próprias contam 2 (`fatores/glossario.md`); (2) tela que só passou na demo, sem o cliente falar dela, **não conta**; (3) **nenhuma dúvida entra na venda**: o campo fica no valor do silêncio (tabela única no Passo 4 de `leitura-transcricoes-prototipo.md`) e a dúvida vai para **`a_confirmar`**, que o script calcula fora da venda ("vender 14 + até 4"), com status ⚠️ até o CN responder; `lacunas_fathom` saiu; (4) só o resumo da reunião, sem transcrição → ⚠️ preliminar. Glossário e F1 a F6 reescritos para transcrição + protótipo (PRD só "na revalidação"); F5 corrigido (infra sem acesso não rejeita). Pesos inalterados: Projetos A a D continuam em 12, 14, 18 e 18.
+- **Próximo passo:** rodar o CTE com as transcrições e o protótipo (esperado 13 a 14 sprints) e calibrar os limites da jornada (3 entidades, 6 telas).
 
 ### Onde paramos (21/10/2026)
 - **Revisão de 20/10 (reunião "Validação Skill NTec" + LLM Council):** **F0 de viabilidade** antes de tudo (🚫 rejeita ou 🚩 para para a área de projetos); critérios e pesos em **`fatores/`**, um arquivo por fase; **nenhum campo do JSON com padrão** (o script para se faltar um); tetos de fase não cortam a soma; **fator Claude Code e "cliente com pouca disponibilidade" removidos** (quem valida passou para o F0); F2 em 2 a 5 / 6+; formato extra +0,2; `bi_sem_doc` com mínimo 4. `SKILL.md`, `regua-dimensionamento.md`, `leitura-prd.md` e `insumos-e-perguntas.md` já apontam para `fatores/`.
@@ -90,6 +97,8 @@ Histórico de 17/10/2026:
 | 17/10/2026 | Fator Claude Code (primeiro x0,5, depois o meio-termo x0,75 no núcleo do F3); PDF explicativo v4 |
 | 17/10/2026 | Venda com "+" para as lacunas do Fathom ("14 = 12 + 2 que dependem do Fathom"), igual na skill e na página |
 | 21/10/2026 | Revisão de 20/10: F0, `fatores/` por fase, JSON sem padrões, tetos sem corte, fator Claude Code e disponibilidade do cliente removidos; documentos apontando para `fatores/` |
+| 22/10/2026 | Entrada = transcrições + protótipo; F0 revisto; proposta em Markdown |
+| 22/10/2026 | Jornada com regra fechada; dúvidas fora da venda em `a_confirmar` ("+ até X"); `lacunas_fathom` removido; glossário e F1–F6 para transcrição + protótipo |
 
 ### O que foi pedido (origem)
 Criar, para o NTec, uma skill parecida com a do NCiv da Gabi Lobo, que leve em conta que somos uma **empresa júnior**, use os dados reais dos projetos e chegue a uma **faixa de semanas**. O uso deve ser **prático para CNs**, que em geral são fracos tecnicamente e mandam para a equipe de projetos prazos sem sentido.

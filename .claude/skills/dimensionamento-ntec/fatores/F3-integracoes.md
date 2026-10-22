@@ -2,21 +2,23 @@
 
 ✅ **Reunião 20/10:** integrações são um tópico **separado** dos fluxos. Somam no F3 **depois** do fator de formato (não são multiplicadas por ele).
 
-**Peso fixo, sem perguntar ao CN sobre documentação.** O CN não tem como avaliar a API de outro sistema. A linha sai de três perguntas que a PRD já responde.
+**Peso fixo, sem perguntar ao CN sobre documentação.** O CN não tem como avaliar a API de outro sistema. A linha sai de quatro perguntas sobre o que o cliente disse.
 
 ---
 
 ## O teste
 
-Para **cada** item SID "integrar com…" da PRD:
+Para **cada** sistema que o cliente nomeou nas reuniões ("integrar com o ERP", "puxar do Bling", "pagar com Pix"). **Onde ler:** transcrições. Botão do protótipo ("Pagar", "Enviar no WhatsApp") sem fala nas reuniões **não** é integração: vai para `a_confirmar`. Na revalidação, os itens SID da PRD.
+
+**Integração citada de forma vaga** ("seria bom conversar com o sistema de lá", "quem sabe integrar"): não conta. Vai para `a_confirmar` com `"integracao"` na linha que ela teria pelas perguntas abaixo (sistema do cliente sem sentido claro → `bi_sem_doc`).
 
 | # | Pergunta | Onde ler | Resultado |
 |---|---|---|---|
-| 0 | A troca de dados é **automática**, sem uma pessoa disparar? | Item SID, campo **Meio** | Se **não** (uma pessoa importa ou exporta um arquivo): não é integração, é **dependência de dados** (`F3-desenvolvimento.md`) |
-| 1 | É login com Google, envio de e-mail ou upload de arquivo? | Item SID | `template` (0) |
-| 2 | A PRD ou o Fathom dizem que o outro sistema **não tem API**? | Item SID; Fathom | **F0** — parar e consultar |
-| 3 | O sistema **envia e recebe**? | Item SID, campo **Sentido** | Sim → bidirecional. Só envia ou só recebe → unidirecional |
-| 4 | O outro lado é **serviço de mercado** (documentação pública **e** sandbox que o NTec acessa sozinho, sem a TI do cliente)? | Item SID; nome do serviço | Sim → `_doc`. Não, ou dúvida → `_sem_doc` |
+| 0 | A troca de dados é **automática**, sem uma pessoa disparar? | Transcrições ("cai sozinho", "atualiza automático" × "a gente exporta e sobe") | Se **não** (uma pessoa importa ou exporta um arquivo): não é integração, é **dependência de dados** (`F3-desenvolvimento.md`) |
+| 1 | É login com Google, envio de e-mail ou upload de arquivo? | Transcrições | `template` (0) |
+| 2 | Alguma transcrição diz que o outro sistema **não tem API**? | Transcrições | **F0** — parar e consultar |
+| 3 | O sistema **envia e recebe**? | Transcrições ("manda o pedido e recebe o status") | Sim → bidirecional. Só envia ou só recebe → unidirecional. Não dá para saber o sentido → bidirecional (classificação de um fator citado) |
+| 4 | O outro lado é **serviço de mercado** (documentação pública **e** sandbox que o NTec acessa sozinho, sem a TI do cliente)? | Nome do serviço citado | Sim → `_doc`. Não, ou dúvida → `_sem_doc` |
 
 **Exemplos de serviço de mercado:** Mercado Pago, Stripe, Pix via gateway, Google Maps, Mapbox, Expo Push / FCM, OpenAI / Anthropic, WhatsApp Business API, emissores de NF-e, Google Calendar, SMS.
 
@@ -43,9 +45,9 @@ Para **cada** item SID "integrar com…" da PRD:
 
 ---
 
-## Casos que a PRD marca como fator de complexidade
+## Casos comuns
 
-| Na PRD | Linha |
+| O cliente pediu | Linha |
 |---|---|
 | Pagamento (gateway, Pix, cartão) | `bi_doc`. `bi_sem_doc` só se o pagamento passar pelo sistema próprio do cliente |
 | IA (classificar, extrair, gerar, responder) | `uni_doc`. Se a IA decide sem um humano no fim: ⚠️ em *Pontos de atenção* |
@@ -68,6 +70,6 @@ Para **cada** item SID "integrar com…" da PRD:
 ## Origem na resposta
 
 ```
-Integração ERP Totvs: bidirecional com sistema do cliente (origem: PRD 2.4 "envia e recebe pedidos" + acesso depende da TI do cliente)
-Integração Mercado Pago: bidirecional com serviço de mercado (origem: PRD 2.3)
+Integração ERP Totvs: bidirecional com sistema do cliente (origem: T1 · 00:22:10 — "manda o pedido pro Totvs e volta a nota" + acesso depende da TI do cliente)
+Integração Mercado Pago: bidirecional com serviço de mercado (origem: T2 · 00:08:45 — "o cliente paga no Pix pelo app")
 ```

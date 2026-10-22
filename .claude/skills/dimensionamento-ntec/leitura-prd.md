@@ -1,6 +1,8 @@
 # Leitura da PRD — do documento de requisitos para os fatores da régua
 
-A **PRD** (Documento de Requisitos de produto do NTec) é a entrada padrão desta skill. Ela é gerada pela skill `documento-requisitos-ntec` ([repositório](https://github.com/rivasaugustus/documento-requisitos-ntec)) a partir das reuniões com o cliente e vira anexo de contrato. Esta skill roda **depois** dela.
+> **Desde 22/10/2026 a PRD não é mais a entrada padrão.** A skill dimensiona a partir das transcrições das reuniões de diagnóstico + o protótipo navegável (`leitura-transcricoes-prototipo.md`). A PRD vem **por último**, depois da assinatura do contrato, e este arquivo serve para **revalidar** o dimensionamento quando ela existir. Regras que continuam valendo daqui no caminho padrão: a tabela do Passo 3 (fatores de complexidade → linhas da régua) e o "não contar duas vezes". **Nunca contar módulos da PRD:** a quantidade de módulos depende de quem escreveu, não do trabalho. Contar jornadas.
+
+A **PRD** (Documento de Requisitos de produto do NTec) é gerada pela skill `documento-requisitos-ntec` ([repositório](https://github.com/rivasaugustus/documento-requisitos-ntec)) a partir das reuniões com o cliente e vira anexo de contrato.
 
 Este arquivo diz onde, na PRD, está cada campo do JSON do `scripts/calcular_faixa.py`. O critério completo de cada fator (pergunta, onde ler, o que fazer sem resposta) está no arquivo da fase em `fatores/`; se este arquivo e `fatores/` divergirem, vale `fatores/`. **Todo campo é obrigatório:** o script não tem valor padrão e para se faltar algum.
 
@@ -16,7 +18,7 @@ Este arquivo diz onde, na PRD, está cada campo do JSON do `scripts/calcular_fai
 | Blocos "Perfis de acesso", "Funcionalidades" e "Integrações" | Chat da skill da PRD | Conferência. As fontes (`[Fathom · AT 12/03]`, `[chat]`…) mostram de onde veio cada item |
 | **Transcrições do Fathom** (ou resumo do Fathom/Granola) das reuniões com o cliente | As mesmas reuniões que geraram a PRD | Responder o Passo 4 sem perguntar ao CN. O que não estiver nelas vira **lacuna** |
 
-**Sem PRD** (só o formulário Dimensionamento Tec, uma transcrição ou um briefing): dimensionar mesmo assim pelo caminho de `insumos-e-perguntas.md`, mas o status nunca é ✅. Marcar ⚠️ **Estimativa preliminar, sem PRD** e dizer ao CN para rodar a skill da PRD antes de fechar a proposta.
+**Sem PRD:** é o caminho padrão (`leitura-transcricoes-prototipo.md`). Não marcar nada como preliminar por falta de PRD.
 
 **PDF e inventário divergem** (ex.: o inventário tem um módulo que o PDF não tem): vale o PDF, que é o anexo de contrato. Registrar a divergência em *Pontos de atenção*.
 
@@ -28,9 +30,8 @@ Este arquivo diz onde, na PRD, está cada campo do JSON do `scripts/calcular_fai
 |---|---|---|
 | `stack_exigida_fora_da_lista` | 3.1; Fathom ("tem que ser em…") | `true` só se o cliente **exige** tecnologia fora da lista aceita do F0. "Vocês decidem" → `false`. 🚫 rejeita |
 | `offline_sync_com_mongodb_exigido` | Termo "offline"; 3.1; Fathom | `true` se grava sem internet para subir depois **e** o cliente exige MongoDB. 🚫 rejeita |
-| `sla_ou_sustentacao` | Seção 3; Fathom | Suporte 24/7, SLA ou sustentação além da garantia de 30 dias → `true`. 🚫 rejeita |
-| `infra_cliente_sem_acesso` | 3.1; Fathom | Roda na infra do cliente sem acesso do time do NTec para publicar e corrigir → `true`. 🚫 rejeita |
-| `multa_por_atraso` | Fathom; minuta | `true` se o contrato prevê multa por atraso. 🚩 |
+| `sla_ou_sustentacao` | Seção 3; Fathom | Suporte 24/7, SLA ou sustentação além da garantia de 30 dias → `true`. Não rejeita: alerta de contrato de manutenção à parte (22/10/2026) |
+| `infra_cliente_sem_acesso` | 3.1; Fathom | Roda na infra do cliente sem acesso do time do NTec para publicar e corrigir → `true`. Não rejeita: sem garantia, ajustar o contrato (22/10/2026) |
 | `sem_validador_nomeado` | Fathom | `true` se ninguém do cliente foi nomeado para testar e aprovar. Sem Fathom, `true` + lacuna. 🚩 |
 | `feature_sem_referencia_nem_doc` | Fatores de complexidade; Fathom | `true` se alguma feature não tem referência citada **nem** documentação técnica pública. 🚩 |
 | `hardware` | PRD; Fathom | Bluetooth com dispositivo próprio, IoT, leitor, impressora fiscal → `true`. 🚩 |
@@ -46,7 +47,7 @@ Multitenancy com regra diferente por tenant e integração sem API também são 
 | `fluxos_por_formato` | Superfície de cada fluxo | **Só com mais de um formato.** Para cada fluxo: existe só num código → a chave daquele formato; tem tela nos dois → `"compartilhado"`; não dá para saber → `"compartilhado"`. Cada chave leva `{"comuns", "rn_especifica", "atipicas"}` e as somas batem com os três campos de contagem (`fatores/F3-desenvolvimento.md`, 3.2) |
 | `lojas` | Módulo *Disponibilização do Produto* + 3.1 | Publicação na App Store ou Play Store → `"normal"`. Se a 3.4 fala de dado de saúde, financeiro ou de menores → `"sensivel"`. Sem loja → `"nao"` |
 | `niveis_acesso` | 2.1 *Autenticação e Perfis de Acesso* | Contar os perfis (admin conta). 1 → `"1"`. 6 ou mais → `"6+"`. De 2 a 5, o teste de `fatores/F2-acesso-multitenancy.md` (tela exclusiva, status de cadastro ou filtro por dono → `"2-5-grandes"`; senão `"2-5-poucas"`). Sem 2.1 (sem login) → `"nenhum"` |
-| `multitenancy` | Visão Geral, 2.1, RNs e 3.4 (termos: multiempresa, por unidade, por clínica, por filial) | Teste em ordem de `fatores/F2-acesso-multitenancy.md`: uma empresa só → `"nao"`. Regra ou funcionalidade diferente por empresa → `"instancias"` (🚩 F0). Vazamento entre empresas quebra contrato ou LGPD → `"isolado"`. Admin geral vê tudo → `"separado"`. Sem resposta → `"isolado"` + lacuna |
+| `multitenancy` | Visão Geral, 2.1, RNs e 3.4 (termos: multiempresa, por unidade, por clínica, por filial) | Teste em ordem de `fatores/F2-acesso-multitenancy.md`: uma empresa só → `"nao"`. Regra ou funcionalidade diferente por empresa → `"instancias"` (🚩 F0). Vazamento entre empresas quebra contrato ou LGPD → `"isolado"`. Admin geral vê tudo → `"separado"`. Citado sem detalhe → `"separado"` + perguntas em `a_confirmar` (isolado, instâncias) |
 | `fluxos_comuns` | Folhas da seção 2 | **Contar jornadas, não a numeração** (glossário, *Fluxo*): partir das folhas (a subseção mais funda com itens A(cli)D), tirar 2.1 Autenticação (F2), *Disponibilização do Produto* (F5 e F6) e as folhas de offline quando `offline` não for `"nao"`; juntar folhas da mesma jornada; mais de 8 itens A(cli)D = 2 fluxos. Registrar as junções em *Suposições* |
 | `fluxos_rn_especifica` | Módulos com `### Regras de Negócio` + coluna *Fatores de complexidade* | O módulo sai de `fluxos_comuns` e entra aqui quando tem RN de cálculo, fórmula, regra clínica, legal ou de dinheiro, ou quando tem um dos fatores da tabela do Passo 3 que viram RN específica. Conta **uma vez por módulo**, mesmo com várias RNs. **Relatório em template fixo** (PDF, Word, Excel) **não** é RN específica: "Hardcoded" e "template fixo" querem dizer que não há regra a configurar |
 | `features_atipicas` | Coluna *Fatores de complexidade* | Só pelos fatores da tabela do Passo 3 que viram feature atípica. O "produto sem benchmark" não está na PRD: procurar no Fathom (Passo 4) |
@@ -98,10 +99,10 @@ A PRD descreve o produto, não o projeto. Os fatores abaixo ficam de fora dela, 
 | Fator | O que procurar na transcrição | Como traduzir | Pergunta da lacuna (pronta para o CN repassar) |
 |---|---|---|---|
 | Quem valida (`f0.sem_validador_nomeado`) | Nome de quem vai testar e aprovar ("a Ana valida toda sexta") | Pessoa nomeada → `false`. Ninguém nomeado, "depende" → `true` (🚩 F0) | "Quem do cliente vai testar e aprovar as entregas?" |
-| Condições de contrato (`f0.multa_por_atraso`, `f0.sla_ou_sustentacao`, `f0.prazo_exigido_semanas`) | Multa, SLA, suporte, "precisa estar pronto até…" | Dito explicitamente → preencher. Silêncio → `false` / `null`, registrado em *Suposições* | "O contrato vai ter multa por atraso, exigência de suporte ou data limite de entrega?" |
-| Stack e infra (`f0.stack_exigida_fora_da_lista`, `stack_fora_template`, `f0.infra_cliente_sem_acesso`, `deploy_infra_cliente`) | Tecnologia exigida ("tem que ser em…"), "nossos servidores", "a nossa TI hospeda", nuvem própria | Exigência fora da lista do F0 → rejeição. Exigência dentro da lista mas fora do template → `stack_fora_template: true`. Infra do cliente com acesso do NTec → `deploy_infra_cliente: true`; sem acesso → rejeição. "Vocês decidem", "tanto faz" → `false`. Pular se a 3.1 da PRD já responde | "O cliente exige alguma tecnologia, ou que o sistema fique nos servidores dele?" |
+| Condições de contrato (`f0.sla_ou_sustentacao`, `f0.prazo_exigido_semanas`) | SLA, suporte, "precisa estar pronto até…" | Dito explicitamente → preencher. Silêncio → `false` / `null`, registrado em *Suposições*. (Multa por atraso saiu em 22/10/2026) | "O cliente espera suporte 24/7 ou SLA depois da entrega, ou tem uma data limite?" |
+| Stack e infra (`f0.stack_exigida_fora_da_lista`, `stack_fora_template`, `f0.infra_cliente_sem_acesso`, `deploy_infra_cliente`) | Tecnologia exigida ("tem que ser em…"), "nossos servidores", "a nossa TI hospeda", nuvem própria | Exigência fora da lista do F0 → rejeição. Exigência dentro da lista mas fora do template → `stack_fora_template: true`. Infra do cliente com acesso do NTec → `deploy_infra_cliente: true`; sem acesso → também `f0.infra_cliente_sem_acesso: true` (📝 sem garantia, não rejeita). "Vocês decidem", "tanto faz" → `false`. Pular se a 3.1 da PRD já responde | "O cliente exige alguma tecnologia, ou que o sistema fique nos servidores dele?" |
 | Atípico (`atipico`, `features_atipicas`) | App ou site citado como referência ("tipo o…", "igual ao…", "vi um que…") | Referência citada → `false`. "Não existe nada parecido" → `true` | "Existe algum app ou site parecido que a gente possa usar de referência?" |
-| Publicação nas lojas (`lojas`) | "vai pra loja", "baixar na App Store", "só a nossa equipe usa" | Pular se a PRD tem o módulo *Disponibilização do Produto*. Loja aberta ao público → `"normal"` ou `"sensivel"` (`fatores/F6-lojas.md`). Só uso interno → `"nao"`. Silêncio → publica + `"lojas"` em `lacunas_fathom` | "O app vai para a App Store e a Play Store, ou só para uso interno?" |
+| Publicação nas lojas (`lojas`) | "vai pra loja", "baixar na App Store", "só a nossa equipe usa" | Pular se a PRD tem o módulo *Disponibilização do Produto*. Loja aberta ao público → `"normal"` ou `"sensivel"` (`fatores/F6-lojas.md`). Só uso interno → `"nao"`. Silêncio → `"nao"` + pergunta em `a_confirmar` | "O app vai para a App Store e a Play Store, ou só para uso interno?" |
 | Semanas off | Data ou mês de início, prazo de lançamento | Data → contar férias, provas e recesso | "Qual é a data prevista de início? (para contar férias, provas e recesso)" |
 
 **O que conta como resposta encontrada:**
@@ -109,18 +110,17 @@ A PRD descreve o produto, não o projeto. Os fatores abaixo ficam de fora dela, 
 - Duas reuniões dizem coisas diferentes → vale a mais recente, e a divergência vai para *Pontos de atenção*. Se não der para saber qual vale, é lacuna.
 - **Não é resposta:** dedução a partir do tom da conversa, silêncio sobre o assunto, ou fala vaga ("vamos ver", "acho que sim"). Tudo isso é lacuna.
 
-**O que fazer com a lacuna:**
-1. Dimensionar mesmo assim com o **valor mais pesado plausível** (`f0.sem_validador_nomeado: true`, `stack_fora_template: true` só se houver algum indício, `atipico: true` só se nenhuma referência foi citada). Semanas off sem data de início: não somar, e dizer isso no prazo em uma frase.
-2. **Mostrar quanto da venda depende das lacunas.** No JSON da régua, listar os fatores em lacuna em `"lacunas_fathom"` (só `atipico`, `stack_fora_template`, `deploy_infra_cliente` e `lojas` entram; ex.: `["atipico", "lojas"]`; `lojas` entra quando não se sabe **se** o app vai para as lojas, e o valor leve é `"nao"`) e marcar `"fathom": true` se havia transcrição (o Fathom existe, mas não fala do assunto). O script refaz a conta com esses fatores no valor leve e diz a diferença em sprints inteiras. O prazo vende o número com as lacunas e mostra a parte delas com "+": *"Recomendado vender 14 semanas (7 sprints) = 12 + 2 que dependem do Fathom (referência de produto), mais as semanas off."* Confirmando as lacunas no leve, a venda cai para o primeiro número. Com Fathom que não fala do assunto, a frase diz "dependem de confirmar com o cliente". Se a diferença não muda as sprints, não há "+".
-3. Listar na seção **5. Lacunas para o CN** da resposta: o fator, o que foi procurado e não achado, a pergunta pronta e o valor provisório usado na conta.
-4. Registrar o valor provisório em *Suposições*, com `(origem: lacuna — não está no Fathom)`.
-5. **Status:** lacuna em quem valida deixa o status em 🚩 (F0). Lacuna em stack/infra ou atípico mexe na faixa → ⚠️ *Precisa de revisão* até o CN responder. Lacuna só na data de início não muda a faixa: não rebaixa o status.
+**O que fazer com a lacuna** (desde 22/10/2026, igual ao caminho padrão: `leitura-transcricoes-prototipo.md`, Passos 4 e 5):
+1. Pôr na conta o **valor do silêncio** (tabela do Passo 4 de `leitura-transcricoes-prototipo.md`), nunca o mais pesado. Exceção: quem valida sem resposta → `f0.sem_validador_nomeado: true` (🚩). Semanas off sem data de início: não somar, e dizer isso no prazo em uma frase.
+2. Pôr a dúvida em **`a_confirmar`**, com o efeito se a resposta for sim. O script calcula o custo e a venda sai "+ até X que dependem de N perguntas em aberto". (O antigo `lacunas_fathom`, que punha a lacuna na venda, foi removido e o script recusa o campo.)
+3. Registrar o valor do silêncio em *Suposições*, com `(silêncio — não está nas transcrições)`.
+4. **Status:** com item em `a_confirmar`, ⚠️ até o CN responder; quem valida sem resposta deixa 🚩.
 
-Quando o CN responder uma lacuna, trocar o valor provisório, tirar o fator de `lacunas_fathom`, rodar o script de novo e mudar a origem para `(origem: CN)`.
+Quando o CN responder: **sim** → aplicar o efeito no JSON e tirar o item; **não** → tirar o item. Rodar o script de novo e mudar a origem para `(CN, no chat)`.
 
 **Não perguntar sobre a documentação das integrações.** O CN não tem como responder: a skill aplica o peso fixo do Passo 2 e registra a classificação em *Suposições* (ex.: `Integração ERP: bidirecional com sistema do cliente (origem: PRD 2.4 + regra de peso fixo)`).
 
-**Lacuna dentro da PRD** (módulo sem superfície, integração sem meio, fluxo de dados sem uma das três partes, "tempo real" sem mecanismo): não deveria acontecer, porque a skill da PRD pergunta antes de gerar o PDF. Se aparecer, tratar como fator desconhecido (perguntar, ou usar o valor mais pesado) e registrar em *Pontos de atenção* que a PRD precisa de revisão antes de virar anexo de contrato.
+**Lacuna dentro da PRD** (módulo sem superfície, integração sem meio, fluxo de dados sem uma das três partes, "tempo real" sem mecanismo): não deveria acontecer, porque a skill da PRD pergunta antes de gerar o PDF. Se aparecer, tratar como fator desconhecido (valor do silêncio + pergunta em `a_confirmar`) e registrar em *Pontos de atenção* que a PRD precisa de revisão antes de virar anexo de contrato.
 
 ## Passo 5 — Origem de cada fator
 
